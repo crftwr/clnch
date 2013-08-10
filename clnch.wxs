@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+    <Product Id="5731AA90-A23C-4978-AE10-8AEE7BF3AB16" Name="CraftLaunch" Language="1033" Version="1.0.0.0" Manufacturer="craftware" UpgradeCode="113AFF53-947F-4290-8902-289747384143">
+        <Package Description="CraftLaunch" Comments="CraftLaunch" InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="clnch.cab" EmbedCab="yes" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="DesktopFolder" />
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ProgramMenuDir" Name="CraftLaunch">
+                    <Component Id="StartMenuShortcuts" Guid="5B5932A1-972F-4F46-9C87-D7A55F13643E">
+                        <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+                        <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" />
+                        <util:InternetShortcut Id="WebsiteShortcut" Name="Craftware" Target="https://sites.google.com/site/craftware/" />
+                    </Component>
+                </Directory>
+            </Directory>
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="CraftLaunch" Name="CraftLaunch">
+                    <Component Id="clnch.exe" DiskId="1" Guid="22E931A8-93B2-4ECA-B186-312237C53A0E">
+                        <File Id="clnch.exe" Name="clnch.exe" Source="dist\clnch\clnch.exe">
+                            <Shortcut Id="desktopShortcut" Directory="DesktopFolder" Name="CraftLaunch" WorkingDirectory="INSTALLDIR" Advertise="yes" Icon="DesktopIcon.exe" IconIndex="0" />
+                            <Shortcut Id="ExeShortcut" Directory="ProgramMenuDir" Name="CraftLaunch" Advertise="yes" Icon="StartMenuIcon.exe" IconIndex="0" />
+                        </File>
+                    </Component>
+                    <Component Id="python27.dll" DiskId="1" Guid="76D2BEF5-D59B-4617-9840-B9E0E031EBA8">
+                        <File Id="python27.dll" Name="python27.dll" Source="dist\clnch\python27.dll" />
+                    </Component>
+                    <Component Id="readme.txt" DiskId="1" Guid="676B69E5-FF35-4D17-A59A-4CC9CEE9549C">
+                        <File Id="readme.txt" Name="readme.txt" Source="dist\clnch\readme.txt" />
+                    </Component>
+                    <Component Id="src.zip" DiskId="1" Guid="B22FA004-9F17-4237-86C6-E79608C28890">
+                        <File Id="src.zip" Name="src.zip" Source="dist\clnch\src.zip" />
+                    </Component>
+                    <Component Id="_config.py" DiskId="1" Guid="92258A04-9FBC-4452-9D7B-BE1C4C9BF29B">
+                        <File Id="_config.py" Name="_config.py" Source="dist\clnch\_config.py" />
+                    </Component>
+                    <Directory Id="doc" Name="doc">
+                        <Component Id="index.html" DiskId="1" Guid="499E450B-F826-4C5E-8E6D-F001589E58A8">
+                            <File Id="index.html" Name="index.html" Source="dist\clnch\doc\index.html" />
+                        </Component>
+                        <Directory Id="image" Name="image">
+                            <Component Id="argument.png" DiskId="1" Guid="A882A9DF-D8E2-4264-9C64-21C61A501D44">
+                                <File Id="argument.png" Name="argument.png" Source="dist\clnch\doc\image\argument.png" />
+                            </Component>
+                            <Component Id="calculator.png" DiskId="1" Guid="2788AA3E-5286-422E-BED9-252E251F807A">
+                                <File Id="calculator.png" Name="calculator.png" Source="dist\clnch\doc\image\calculator.png" />
+                            </Component>
+                            <Component Id="clock.png" DiskId="1" Guid="74CA4F1E-2A93-4496-8426-17C086533906">
+                                <File Id="clock.png" Name="clock.png" Source="dist\clnch\doc\image\clock.png" />
+                            </Component>
+                            <Component Id="commandlist.png" DiskId="1" Guid="219A455D-1259-47C1-951E-D94F7846C4DA">
+                                <File Id="commandlist.png" Name="commandlist.png" Source="dist\clnch\doc\image\commandlist.png" />
+                            </Component>
+                            <Component Id="command_complete.png" DiskId="1" Guid="D8675376-51B0-41BC-8F88-A23551FFB42B">
+                                <File Id="command_complete.png" Name="command_complete.png" Source="dist\clnch\doc\image\command_complete.png" />
+                            </Component>
+                            <Component Id="configmenu.png" DiskId="1" Guid="801E1CEA-C0D2-43AC-95B4-1303D9AE513D">
+                                <File Id="configmenu.png" Name="configmenu.png" Source="dist\clnch\doc\image\configmenu.png" />
+                            </Component>
+                            <Component Id="filename_complete.png" DiskId="1" Guid="B772BC39-66F3-45D6-B772-45FE8D6FE170">
+                                <File Id="filename_complete.png" Name="filename_complete.png" Source="dist\clnch\doc\image\filename_complete.png" />
+                            </Component>
+                            <Component Id="mainwindow.png" DiskId="1" Guid="334DF653-94F6-40E4-AF6D-693932AA9CD3">
+                                <File Id="mainwindow.png" Name="mainwindow.png" Source="dist\clnch\doc\image\mainwindow.png" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="reference" Name="reference">
+                            <Component Id="annotated.html" DiskId="1" Guid="D79863DC-5EAF-4846-AAEA-F47C82C4156C">
+                                <File Id="annotated.html" Name="annotated.html" Source="dist\clnch\doc\reference\annotated.html" />
+                            </Component>
+                            <Component Id="classclnch__listwindow_1_1ListWindow_members.html" DiskId="1" Guid="4B312E63-DA00-455A-97C7-8F6A099BAC48">
+                                <File Id="classclnch__listwindow_1_1ListWindow_members.html" Name="classclnch__listwindow_1_1ListWindow-members.html" Source="dist\clnch\doc\reference\classclnch__listwindow_1_1ListWindow-members.html" />
+                            </Component>
+                            <Component Id="classclnch__listwindow_1_1ListWindow.html" DiskId="1" Guid="4F6B74F3-110A-49D8-9C12-9C62A8F2037B">
+                                <File Id="classclnch__listwindow_1_1ListWindow.html" Name="classclnch__listwindow_1_1ListWindow.html" Source="dist\clnch\doc\reference\classclnch__listwindow_1_1ListWindow.html" />
+                            </Component>
+                            <Component Id="classclnch__misc_1_1ChrEvent_members.html" DiskId="1" Guid="0385EDA5-4F97-47B4-AD1F-FC7A0B0ACB59">
+                                <File Id="classclnch__misc_1_1ChrEvent_members.html" Name="classclnch__misc_1_1ChrEvent-members.html" Source="dist\clnch\doc\reference\classclnch__misc_1_1ChrEvent-members.html" />
+                            </Component>
+                            <Component Id="classclnch__misc_1_1ChrEvent.html" DiskId="1" Guid="1C54DAEB-D363-43CC-9BAE-2A50D13EE3AB">
+                                <File Id="classclnch__misc_1_1ChrEvent.html" Name="classclnch__misc_1_1ChrEvent.html" Source="dist\clnch\doc\reference\classclnch__misc_1_1ChrEvent.html" />
+                            </Component>
+                            <Component Id="classclnch__misc_1_1KeyEvent_members.html" DiskId="1" Guid="0A772323-AAB9-48F2-953E-772C12AD3138">
+                                <File Id="classclnch__misc_1_1KeyEvent_members.html" Name="classclnch__misc_1_1KeyEvent-members.html" Source="dist\clnch\doc\reference\classclnch__misc_1_1KeyEvent-members.html" />
+                            </Component>
+                            <Component Id="classclnch__misc_1_1KeyEvent.html" DiskId="1" Guid="17D8633F-5234-404D-9379-B8B83557035F">
+                                <File Id="classclnch__misc_1_1KeyEvent.html" Name="classclnch__misc_1_1KeyEvent.html" Source="dist\clnch\doc\reference\classclnch__misc_1_1KeyEvent.html" />
+                            </Component>
+                            <Component Id="classclnch__misc_1_1KeyMapCondition_members.html" DiskId="1" Guid="CB328D58-D432-4C46-AC88-68D4182D675D">
+                                <File Id="classclnch__misc_1_1KeyMapCondition_members.html" Name="classclnch__misc_1_1KeyMapCondition-members.html" Source="dist\clnch\doc\reference\classclnch__misc_1_1KeyMapCondition-members.html" />
+                            </Component>
+                            <Component Id="classclnch__misc_1_1KeyMapCondition.html" DiskId="1" Guid="1D264C07-9C8E-452E-9820-B9A3EF82C0C6">
+                                <File Id="classclnch__misc_1_1KeyMapCondition.html" Name="classclnch__misc_1_1KeyMapCondition.html" Source="dist\clnch\doc\reference\classclnch__misc_1_1KeyMapCondition.html" />
+                            </Component>
+                            <Component Id="classclnch__threadutil_1_1JobItem_members.html" DiskId="1" Guid="423B4D85-154F-4921-B9B0-742AA39C2652">
+                                <File Id="classclnch__threadutil_1_1JobItem_members.html" Name="classclnch__threadutil_1_1JobItem-members.html" Source="dist\clnch\doc\reference\classclnch__threadutil_1_1JobItem-members.html" />
+                            </Component>
+                            <Component Id="classclnch__threadutil_1_1JobItem.html" DiskId="1" Guid="E53F63B8-EBDA-40D2-A9E7-5778C5F3A002">
+                                <File Id="classclnch__threadutil_1_1JobItem.html" Name="classclnch__threadutil_1_1JobItem.html" Source="dist\clnch\doc\reference\classclnch__threadutil_1_1JobItem.html" />
+                            </Component>
+                            <Component Id="classclnch__threadutil_1_1JobQueue_members.html" DiskId="1" Guid="2BFBA3E8-B0A8-4480-8224-BE2E3AF68674">
+                                <File Id="classclnch__threadutil_1_1JobQueue_members.html" Name="classclnch__threadutil_1_1JobQueue-members.html" Source="dist\clnch\doc\reference\classclnch__threadutil_1_1JobQueue-members.html" />
+                            </Component>
+                            <Component Id="classclnch__threadutil_1_1JobQueue.html" DiskId="1" Guid="663635A7-8086-4A69-8F7C-7E3E02F1EF7C">
+                                <File Id="classclnch__threadutil_1_1JobQueue.html" Name="classclnch__threadutil_1_1JobQueue.html" Source="dist\clnch\doc\reference\classclnch__threadutil_1_1JobQueue.html" />
+                            </Component>
+                            <Component Id="classes.html" DiskId="1" Guid="95BB640C-AD2A-4CDF-AD4B-545E35ECE7BD">
+                                <File Id="classes.html" Name="classes.html" Source="dist\clnch\doc\reference\classes.html" />
+                            </Component>
+                            <Component Id="clnch_8py_source.html" DiskId="1" Guid="FD50CF1A-5159-4122-9B5C-37B8F2C1A528">
+                                <File Id="clnch_8py_source.html" Name="clnch_8py_source.html" Source="dist\clnch\doc\reference\clnch_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__colortable_8py_source.html" DiskId="1" Guid="C5E4CA74-466A-4E51-8530-9AE4709B149A">
+                                <File Id="clnch__colortable_8py_source.html" Name="clnch__colortable_8py_source.html" Source="dist\clnch\doc\reference\clnch__colortable_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__commandline_8py_source.html" DiskId="1" Guid="6DF58E5B-247B-4110-9BD0-76D96E5049D2">
+                                <File Id="clnch__commandline_8py_source.html" Name="clnch__commandline_8py_source.html" Source="dist\clnch\doc\reference\clnch__commandline_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__commandwindow_8py_source.html" DiskId="1" Guid="FAB81947-A8D9-4F05-8824-C0D09837960B">
+                                <File Id="clnch__commandwindow_8py_source.html" Name="clnch__commandwindow_8py_source.html" Source="dist\clnch\doc\reference\clnch__commandwindow_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__configmenu_8py_source.html" DiskId="1" Guid="16AE58FD-B209-4481-B362-3870CCC71CFF">
+                                <File Id="clnch__configmenu_8py_source.html" Name="clnch__configmenu_8py_source.html" Source="dist\clnch\doc\reference\clnch__configmenu_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__consolewindow_8py_source.html" DiskId="1" Guid="C9FB4C6F-1B38-4A2B-ABE9-9FDBD4DA6ACC">
+                                <File Id="clnch__consolewindow_8py_source.html" Name="clnch__consolewindow_8py_source.html" Source="dist\clnch\doc\reference\clnch__consolewindow_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__ini_8py_source.html" DiskId="1" Guid="6B1CDC88-395B-4171-A217-EB170627683A">
+                                <File Id="clnch__ini_8py_source.html" Name="clnch__ini_8py_source.html" Source="dist\clnch\doc\reference\clnch__ini_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__ipc_8py_source.html" DiskId="1" Guid="0C1CDAAC-1F73-4CA5-8765-0AF92D4E11A1">
+                                <File Id="clnch__ipc_8py_source.html" Name="clnch__ipc_8py_source.html" Source="dist\clnch\doc\reference\clnch__ipc_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__isearch_8py_source.html" DiskId="1" Guid="B7F44B96-FB5B-4319-9F98-D02C995984AE">
+                                <File Id="clnch__isearch_8py_source.html" Name="clnch__isearch_8py_source.html" Source="dist\clnch\doc\reference\clnch__isearch_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__listwindow_8py_source.html" DiskId="1" Guid="BD6CF0DD-DEE3-4F95-B178-E48FFBBA41BA">
+                                <File Id="clnch__listwindow_8py_source.html" Name="clnch__listwindow_8py_source.html" Source="dist\clnch\doc\reference\clnch__listwindow_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__mainwindow_8py_source.html" DiskId="1" Guid="3BC90E3C-FA61-4E6B-9224-A1FE88D46C1B">
+                                <File Id="clnch__mainwindow_8py_source.html" Name="clnch__mainwindow_8py_source.html" Source="dist\clnch\doc\reference\clnch__mainwindow_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__main_8py_source.html" DiskId="1" Guid="46701A17-089A-4C61-AE1D-FCB89D63F6E7">
+                                <File Id="clnch__main_8py_source.html" Name="clnch__main_8py_source.html" Source="dist\clnch\doc\reference\clnch__main_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__misc_8py_source.html" DiskId="1" Guid="00601465-2581-4439-B391-424CC46AAEEF">
+                                <File Id="clnch__misc_8py_source.html" Name="clnch__misc_8py_source.html" Source="dist\clnch\doc\reference\clnch__misc_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__msgbox_8py_source.html" DiskId="1" Guid="AAE4B0B2-BF0D-4F17-94E7-94BF41A9D0A9">
+                                <File Id="clnch__msgbox_8py_source.html" Name="clnch__msgbox_8py_source.html" Source="dist\clnch\doc\reference\clnch__msgbox_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__musicplayer_8py_source.html" DiskId="1" Guid="5E3E9DF0-A374-4B16-BC58-BDA189280944">
+                                <File Id="clnch__musicplayer_8py_source.html" Name="clnch__musicplayer_8py_source.html" Source="dist\clnch\doc\reference\clnch__musicplayer_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__plane3x3_8py_source.html" DiskId="1" Guid="A493633A-A3D4-4E53-B180-E9418C65F6EF">
+                                <File Id="clnch__plane3x3_8py_source.html" Name="clnch__plane3x3_8py_source.html" Source="dist\clnch\doc\reference\clnch__plane3x3_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__resource_8py_source.html" DiskId="1" Guid="0ED714C9-228C-4391-971E-91FC11DD56E7">
+                                <File Id="clnch__resource_8py_source.html" Name="clnch__resource_8py_source.html" Source="dist\clnch\doc\reference\clnch__resource_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__skin_8py_source.html" DiskId="1" Guid="CC0E6688-00D4-4D5F-B4D8-28570F9D8805">
+                                <File Id="clnch__skin_8py_source.html" Name="clnch__skin_8py_source.html" Source="dist\clnch\doc\reference\clnch__skin_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__statusbar_8py_source.html" DiskId="1" Guid="7047C7EA-21B8-4B60-86F8-71939A8B4D3D">
+                                <File Id="clnch__statusbar_8py_source.html" Name="clnch__statusbar_8py_source.html" Source="dist\clnch\doc\reference\clnch__statusbar_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__subprocess_8py_source.html" DiskId="1" Guid="FA38229F-78CA-4CA3-8057-59D08E2184C3">
+                                <File Id="clnch__subprocess_8py_source.html" Name="clnch__subprocess_8py_source.html" Source="dist\clnch\doc\reference\clnch__subprocess_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__theme_8py_source.html" DiskId="1" Guid="517BBC8C-B7F9-4052-A5F8-983680D22E78">
+                                <File Id="clnch__theme_8py_source.html" Name="clnch__theme_8py_source.html" Source="dist\clnch\doc\reference\clnch__theme_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__threadutil_8py_source.html" DiskId="1" Guid="B6B0F513-1643-4A62-975D-FC8972574A0B">
+                                <File Id="clnch__threadutil_8py_source.html" Name="clnch__threadutil_8py_source.html" Source="dist\clnch\doc\reference\clnch__threadutil_8py_source.html" />
+                            </Component>
+                            <Component Id="clnch__widget_8py_source.html" DiskId="1" Guid="F8749243-B236-4F78-94EC-6570795E71B7">
+                                <File Id="clnch__widget_8py_source.html" Name="clnch__widget_8py_source.html" Source="dist\clnch\doc\reference\clnch__widget_8py_source.html" />
+                            </Component>
+                            <Component Id="doxygen.css" DiskId="1" Guid="26A95614-BAD0-4982-AAFC-E9FFA9274B09">
+                                <File Id="doxygen.css" Name="doxygen.css" Source="dist\clnch\doc\reference\doxygen.css" />
+                            </Component>
+                            <Component Id="doxygen.png" DiskId="1" Guid="F9122190-F30C-4A27-83D6-478FA6B4F6FA">
+                                <File Id="doxygen.png" Name="doxygen.png" Source="dist\clnch\doc\reference\doxygen.png" />
+                            </Component>
+                            <Component Id="files.html" DiskId="1" Guid="683B6730-CFC7-4A0A-A146-256A210C99E9">
+                                <File Id="files.html" Name="files.html" Source="dist\clnch\doc\reference\files.html" />
+                            </Component>
+                            <Component Id="functions.html" DiskId="1" Guid="A582A18C-38EC-457F-9E5F-1A9FB9F5F219">
+                                <File Id="functions.html" Name="functions.html" Source="dist\clnch\doc\reference\functions.html" />
+                            </Component>
+                            <Component Id="functions_func.html" DiskId="1" Guid="D2806E79-A8DA-4FEE-A7F4-6A5E4BE5624C">
+                                <File Id="functions_func.html" Name="functions_func.html" Source="dist\clnch\doc\reference\functions_func.html" />
+                            </Component>
+                            <Component Id="group__global.html" DiskId="1" Guid="1894B3D8-067C-4094-8737-A99DBB3AC260">
+                                <File Id="group__global.html" Name="group__global.html" Source="dist\clnch\doc\reference\group__global.html" />
+                            </Component>
+                            <Component Id="index.html_1" DiskId="1" Guid="ACE227A8-A372-4539-A83D-FCC987291937">
+                                <File Id="index.html_1" Name="index.html" Source="dist\clnch\doc\reference\index.html" />
+                            </Component>
+                            <Component Id="modules.html" DiskId="1" Guid="4B0B9308-DA80-4D12-8A4A-82628CC17EA0">
+                                <File Id="modules.html" Name="modules.html" Source="dist\clnch\doc\reference\modules.html" />
+                            </Component>
+                            <Component Id="tabs.css" DiskId="1" Guid="D7DB30C6-B8A6-4ACC-B15D-15C8FB2C489E">
+                                <File Id="tabs.css" Name="tabs.css" Source="dist\clnch\doc\reference\tabs.css" />
+                            </Component>
+                            <Component Id="tab_b.gif" DiskId="1" Guid="D3341C06-2838-4B78-8D74-B8659C73C402">
+                                <File Id="tab_b.gif" Name="tab_b.gif" Source="dist\clnch\doc\reference\tab_b.gif" />
+                            </Component>
+                            <Component Id="tab_l.gif" DiskId="1" Guid="9C819BE9-3B0A-4FCB-ACB3-E7C38D92D51F">
+                                <File Id="tab_l.gif" Name="tab_l.gif" Source="dist\clnch\doc\reference\tab_l.gif" />
+                            </Component>
+                            <Component Id="tab_r.gif" DiskId="1" Guid="E084830C-A4AF-4E17-8057-0D21EF5035C0">
+                                <File Id="tab_r.gif" Name="tab_r.gif" Source="dist\clnch\doc\reference\tab_r.gif" />
+                            </Component>
+                        </Directory>
+                    </Directory>
+                    <Directory Id="extension" Name="extension">
+                        <Component Id="_.keepme" DiskId="1" Guid="57185C29-323C-428F-82E4-B89403B33A34">
+                            <File Id="_.keepme" Name=".keepme" Source="dist\clnch\extension\.keepme" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="lib" Name="lib">
+                        <Component Id="bz2.pyd" DiskId="1" Guid="2AB32EFA-0C26-4F92-AD29-20BC5F11C875">
+                            <File Id="bz2.pyd" Name="bz2.pyd" Source="dist\clnch\lib\bz2.pyd" />
+                        </Component>
+                        <Component Id="ckit.ckitcore.pyd" DiskId="1" Guid="C9FD80E2-D7EA-458B-BC45-DD8B859650EE">
+                            <File Id="ckit.ckitcore.pyd" Name="ckit.ckitcore.pyd" Source="dist\clnch\lib\ckit.ckitcore.pyd" />
+                        </Component>
+                        <Component Id="clnch_native.pyd" DiskId="1" Guid="8E049C65-7174-425E-97BC-31F8041E49BD">
+                            <File Id="clnch_native.pyd" Name="clnch_native.pyd" Source="dist\clnch\lib\clnch_native.pyd" />
+                        </Component>
+                        <Component Id="library.zip" DiskId="1" Guid="9CEC7FA0-661C-4000-9738-2C8D82561B0A">
+                            <File Id="library.zip" Name="library.zip" Source="dist\clnch\lib\library.zip" />
+                        </Component>
+                        <Component Id="pyauto.pyautocore.pyd" DiskId="1" Guid="A002FDA4-3C3A-4BEE-A7DE-AD3D546D2EF8">
+                            <File Id="pyauto.pyautocore.pyd" Name="pyauto.pyautocore.pyd" Source="dist\clnch\lib\pyauto.pyautocore.pyd" />
+                        </Component>
+                        <Component Id="pyautohook.dll" DiskId="1" Guid="F5A0E96C-81DF-4A8A-9295-6E078E0355C9">
+                            <File Id="pyautohook.dll" Name="pyautohook.dll" Source="dist\clnch\lib\pyautohook.dll" />
+                        </Component>
+                        <Component Id="select.pyd" DiskId="1" Guid="B5DF5158-27BC-4BD9-86AF-3C50E98066BE">
+                            <File Id="select.pyd" Name="select.pyd" Source="dist\clnch\lib\select.pyd" />
+                        </Component>
+                        <Component Id="unicodedata.pyd" DiskId="1" Guid="D4EE2C89-776D-4E3C-A29A-789B30EDCD24">
+                            <File Id="unicodedata.pyd" Name="unicodedata.pyd" Source="dist\clnch\lib\unicodedata.pyd" />
+                        </Component>
+                        <Component Id="_ctypes.pyd" DiskId="1" Guid="95028FF5-3AEA-4B82-9961-89B532E30ED4">
+                            <File Id="_ctypes.pyd" Name="_ctypes.pyd" Source="dist\clnch\lib\_ctypes.pyd" />
+                        </Component>
+                        <Component Id="_imaging.pyd" DiskId="1" Guid="69C920BE-349E-42B3-8A4C-07E46BE3D66E">
+                            <File Id="_imaging.pyd" Name="_imaging.pyd" Source="dist\clnch\lib\_imaging.pyd" />
+                        </Component>
+                        <Component Id="_socket.pyd" DiskId="1" Guid="67DF84C6-D493-4BD9-B299-ABB3B20CF9B1">
+                            <File Id="_socket.pyd" Name="_socket.pyd" Source="dist\clnch\lib\_socket.pyd" />
+                        </Component>
+                        <Component Id="_ssl.pyd" DiskId="1" Guid="6345A577-796C-47C3-B4C1-0AB3985C9EB8">
+                            <File Id="_ssl.pyd" Name="_ssl.pyd" Source="dist\clnch\lib\_ssl.pyd" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="license" Name="license">
+                        <Component Id="python_license.txt" DiskId="1" Guid="D1B4E068-FC6B-4D9C-AD3B-60D16755A7F3">
+                            <File Id="python_license.txt" Name="python_license.txt" Source="dist\clnch\license\python_license.txt" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="theme" Name="theme">
+                        <Directory Id="black" Name="black">
+                            <Component Id="bar.png" DiskId="1" Guid="43CB7C86-B2B7-4508-B1E3-0C7FB4EF932E">
+                                <File Id="bar.png" Name="bar.png" Source="dist\clnch\theme\black\bar.png" />
+                            </Component>
+                            <Component Id="edit.png" DiskId="1" Guid="5DEFFBC6-3BD7-47CB-84FB-F2C9C6C213D9">
+                                <File Id="edit.png" Name="edit.png" Source="dist\clnch\theme\black\edit.png" />
+                            </Component>
+                            <Component Id="isearch.png" DiskId="1" Guid="D9DD8998-BDC2-45A1-8114-59FC60857278">
+                                <File Id="isearch.png" Name="isearch.png" Source="dist\clnch\theme\black\isearch.png" />
+                            </Component>
+                            <Component Id="scrollbar0.png" DiskId="1" Guid="D6028E7C-6ECD-4EB6-9F15-42FE7DF04A88">
+                                <File Id="scrollbar0.png" Name="scrollbar0.png" Source="dist\clnch\theme\black\scrollbar0.png" />
+                            </Component>
+                            <Component Id="scrollbar1.png" DiskId="1" Guid="EF940D45-08A1-4C9C-9680-A8FEA02E8794">
+                                <File Id="scrollbar1.png" Name="scrollbar1.png" Source="dist\clnch\theme\black\scrollbar1.png" />
+                            </Component>
+                            <Component Id="theme.ini" DiskId="1" Guid="F741F9BB-4BE6-40EA-B7E4-3528117DB968">
+                                <File Id="theme.ini" Name="theme.ini" Source="dist\clnch\theme\black\theme.ini" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="white" Name="white">
+                            <Component Id="bar.png_1" DiskId="1" Guid="80F8ECD7-329D-4AA8-9E3C-DF05C7991073">
+                                <File Id="bar.png_1" Name="bar.png" Source="dist\clnch\theme\white\bar.png" />
+                            </Component>
+                            <Component Id="edit.png_1" DiskId="1" Guid="1DEA328A-4122-4673-AB54-FE5F2E013B7A">
+                                <File Id="edit.png_1" Name="edit.png" Source="dist\clnch\theme\white\edit.png" />
+                            </Component>
+                            <Component Id="isearch.png_1" DiskId="1" Guid="6A209A99-245E-4E14-9F9A-71090360A031">
+                                <File Id="isearch.png_1" Name="isearch.png" Source="dist\clnch\theme\white\isearch.png" />
+                            </Component>
+                            <Component Id="scrollbar0.png_1" DiskId="1" Guid="8E74123D-A662-4F39-A9D6-77A0C414BB77">
+                                <File Id="scrollbar0.png_1" Name="scrollbar0.png" Source="dist\clnch\theme\white\scrollbar0.png" />
+                            </Component>
+                            <Component Id="scrollbar1.png_1" DiskId="1" Guid="3E616983-4879-4E69-A295-5E4F3B4F64CF">
+                                <File Id="scrollbar1.png_1" Name="scrollbar1.png" Source="dist\clnch\theme\white\scrollbar1.png" />
+                            </Component>
+                            <Component Id="theme.ini_1" DiskId="1" Guid="EB6F2723-C148-4765-9BB9-4EEBB18BC2EB">
+                                <File Id="theme.ini_1" Name="theme.ini" Source="dist\clnch\theme\white\theme.ini" />
+                            </Component>
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="DefaultFeature" Title="Main Feature" Level="1">
+            <ComponentRef Id="clnch.exe" />
+            <ComponentRef Id="python27.dll" />
+            <ComponentRef Id="readme.txt" />
+            <ComponentRef Id="src.zip" />
+            <ComponentRef Id="_config.py" />
+            <ComponentRef Id="index.html" />
+            <ComponentRef Id="argument.png" />
+            <ComponentRef Id="calculator.png" />
+            <ComponentRef Id="clock.png" />
+            <ComponentRef Id="commandlist.png" />
+            <ComponentRef Id="command_complete.png" />
+            <ComponentRef Id="configmenu.png" />
+            <ComponentRef Id="filename_complete.png" />
+            <ComponentRef Id="mainwindow.png" />
+            <ComponentRef Id="annotated.html" />
+            <ComponentRef Id="classclnch__listwindow_1_1ListWindow_members.html" />
+            <ComponentRef Id="classclnch__listwindow_1_1ListWindow.html" />
+            <ComponentRef Id="classclnch__misc_1_1ChrEvent_members.html" />
+            <ComponentRef Id="classclnch__misc_1_1ChrEvent.html" />
+            <ComponentRef Id="classclnch__misc_1_1KeyEvent_members.html" />
+            <ComponentRef Id="classclnch__misc_1_1KeyEvent.html" />
+            <ComponentRef Id="classclnch__misc_1_1KeyMapCondition_members.html" />
+            <ComponentRef Id="classclnch__misc_1_1KeyMapCondition.html" />
+            <ComponentRef Id="classclnch__threadutil_1_1JobItem_members.html" />
+            <ComponentRef Id="classclnch__threadutil_1_1JobItem.html" />
+            <ComponentRef Id="classclnch__threadutil_1_1JobQueue_members.html" />
+            <ComponentRef Id="classclnch__threadutil_1_1JobQueue.html" />
+            <ComponentRef Id="classes.html" />
+            <ComponentRef Id="clnch_8py_source.html" />
+            <ComponentRef Id="clnch__colortable_8py_source.html" />
+            <ComponentRef Id="clnch__commandline_8py_source.html" />
+            <ComponentRef Id="clnch__commandwindow_8py_source.html" />
+            <ComponentRef Id="clnch__configmenu_8py_source.html" />
+            <ComponentRef Id="clnch__consolewindow_8py_source.html" />
+            <ComponentRef Id="clnch__ini_8py_source.html" />
+            <ComponentRef Id="clnch__ipc_8py_source.html" />
+            <ComponentRef Id="clnch__isearch_8py_source.html" />
+            <ComponentRef Id="clnch__listwindow_8py_source.html" />
+            <ComponentRef Id="clnch__mainwindow_8py_source.html" />
+            <ComponentRef Id="clnch__main_8py_source.html" />
+            <ComponentRef Id="clnch__misc_8py_source.html" />
+            <ComponentRef Id="clnch__msgbox_8py_source.html" />
+            <ComponentRef Id="clnch__musicplayer_8py_source.html" />
+            <ComponentRef Id="clnch__plane3x3_8py_source.html" />
+            <ComponentRef Id="clnch__resource_8py_source.html" />
+            <ComponentRef Id="clnch__skin_8py_source.html" />
+            <ComponentRef Id="clnch__statusbar_8py_source.html" />
+            <ComponentRef Id="clnch__subprocess_8py_source.html" />
+            <ComponentRef Id="clnch__theme_8py_source.html" />
+            <ComponentRef Id="clnch__threadutil_8py_source.html" />
+            <ComponentRef Id="clnch__widget_8py_source.html" />
+            <ComponentRef Id="doxygen.css" />
+            <ComponentRef Id="doxygen.png" />
+            <ComponentRef Id="files.html" />
+            <ComponentRef Id="functions.html" />
+            <ComponentRef Id="functions_func.html" />
+            <ComponentRef Id="group__global.html" />
+            <ComponentRef Id="index.html_1" />
+            <ComponentRef Id="modules.html" />
+            <ComponentRef Id="tabs.css" />
+            <ComponentRef Id="tab_b.gif" />
+            <ComponentRef Id="tab_l.gif" />
+            <ComponentRef Id="tab_r.gif" />
+            <ComponentRef Id="_.keepme" />
+            <ComponentRef Id="bz2.pyd" />
+            <ComponentRef Id="ckit.ckitcore.pyd" />
+            <ComponentRef Id="clnch_native.pyd" />
+            <ComponentRef Id="library.zip" />
+            <ComponentRef Id="pyauto.pyautocore.pyd" />
+            <ComponentRef Id="pyautohook.dll" />
+            <ComponentRef Id="select.pyd" />
+            <ComponentRef Id="unicodedata.pyd" />
+            <ComponentRef Id="_ctypes.pyd" />
+            <ComponentRef Id="_imaging.pyd" />
+            <ComponentRef Id="_socket.pyd" />
+            <ComponentRef Id="_ssl.pyd" />
+            <ComponentRef Id="python_license.txt" />
+            <ComponentRef Id="bar.png" />
+            <ComponentRef Id="edit.png" />
+            <ComponentRef Id="isearch.png" />
+            <ComponentRef Id="scrollbar0.png" />
+            <ComponentRef Id="scrollbar1.png" />
+            <ComponentRef Id="theme.ini" />
+            <ComponentRef Id="bar.png_1" />
+            <ComponentRef Id="edit.png_1" />
+            <ComponentRef Id="isearch.png_1" />
+            <ComponentRef Id="scrollbar0.png_1" />
+            <ComponentRef Id="scrollbar1.png_1" />
+            <ComponentRef Id="theme.ini_1" />
+            <ComponentRef Id="StartMenuShortcuts" />
+        </Feature>
+        <UI />
+        <UIRef Id="WixUI_Minimal" />
+        <Icon Id="DesktopIcon.exe" SourceFile="dist\clnch\clnch.exe" />
+        <Icon Id="StartMenuIcon.exe" SourceFile="dist\clnch\clnch.exe" />
+    </Product>
+</Wix>
