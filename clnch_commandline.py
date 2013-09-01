@@ -12,6 +12,11 @@ import clnch_misc
 import clnch_native
 
 
+## @addtogroup commandline
+## @{
+
+#--------------------------------------------------------------------
+
 def executeCommand( commandline, func, args, mod, history_item, quit ):
 
     # 引数を受け取らない関数やメソッドを許容するためのトリック                
@@ -48,6 +53,7 @@ def executeCommand( commandline, func, args, mod, history_item, quit ):
         commandline.quit()
 
 
+## コマンドラインからのコマンド実行機能
 class commandline_Launcher:
 
     def __init__( self, main_window ):
@@ -126,6 +132,7 @@ class commandline_Launcher:
         return None
     
 
+## コマンドラインでファイルパスを起動する機能
 class commandline_ExecuteFile:
 
     def __init__( self, main_window ):
@@ -175,6 +182,7 @@ class commandline_ExecuteFile:
         return None
 
 
+## コマンドラインで URL を起動する機能
 class commandline_ExecuteURL:
 
     def __init__( self, main_window ):
@@ -209,6 +217,7 @@ class commandline_ExecuteURL:
         return None
 
 
+## コマンドラインでの計算機能
 class commandline_Calculator:
 
     def __init__( self, main_window ):
@@ -248,6 +257,7 @@ class commandline_Calculator:
         return None
 
 
+## コマンドラインでの 10進 <-> 16進 変換機能
 class commandline_Int32Hex:
 
     def __init__( self, main_window ):

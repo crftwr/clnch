@@ -32,6 +32,13 @@ a.toc-backref {
   text-decoration: none ;
   color: black }
 
+blockquote {
+  background-color: #FFFFFF;
+  border-left: 0px solid #FFFFFF;
+  margin: 0 24px 0 4px;
+  padding: 0 12px 0 16px;
+}
+
 blockquote.epigraph {
   margin: 2em 5em ; }
 
