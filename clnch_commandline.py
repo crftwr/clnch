@@ -160,6 +160,9 @@ class commandline_ExecuteFile:
         
         directory, tmp = ckit.splitPath(file)
     
+        if not os.path.isabs(file):
+            file = os.path.abspath(file)
+
         #print( "File: %s" % ( file, ) )
         #print( "      %s" % ( joint_args, ) )
 
