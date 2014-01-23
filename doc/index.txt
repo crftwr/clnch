@@ -259,7 +259,7 @@
 コマンドの設定項目
 ===========================
 
-	    .. image:: image/commandedit.png
+        .. image:: image/commandedit.png
 
     コマンドには、下記のような設定項目があります。
 
@@ -441,6 +441,8 @@ config.py のカスタマイズ
 
         キーには、 コマンド型の呼び出し可能オブジェクト_ を割り当てることが出来ます。
 
+        キーは文字列で指定します。書式は後述します。
+
 
     **コマンド編集用キーマップの定義**
 
@@ -451,6 +453,8 @@ config.py のカスタマイズ
             window.keymap[ "A-Space" ] = window.command_AutoCompleteToggle
 
         キーには、 コマンド型の呼び出し可能オブジェクト_ を割り当てることが出来ます。
+
+        キーは文字列で指定します。書式は後述します。
 
 
     **テキストエディタの設定**
@@ -590,6 +594,105 @@ config.py のカスタマイズ
 
 
 
+キーの文字列書式
+=========================
+
+    window.keymap や window.cmd_keymap を使って、キーの割り当てを行う際は、
+    文字列でキー入力条件を定義します。
+
+    **キーの文字列表記**
+
+        キー入力条件の文字列は、
+
+            C-S-Return
+
+        や
+
+            Ctrl-Shift-Return
+
+        のように、ハイフンで区切って、モディファイアとメインのキーを組み合わせて
+        表現します。
+
+        使用可能なモディファイアの記述方法は以下のとおりです。
+
+        ===================   ========================================================
+         モディファイア        記述方法
+        ===================   ========================================================
+         Alt                   Alt-, A-
+         Control               Ctrl-, C-
+         Shift                 Shift-, S-
+         Windows               Win-, W-
+        ===================   ========================================================
+
+
+        メインのキーの記述方法は以下のとおりです。
+
+        =========================   ===============================
+        記述方法                    補足説明
+        =========================   ===============================
+        A ～ Z
+        0 ～ 9
+        Minus                       | -
+        Plus                        | +
+        Comma                       | ,
+        Period                      | .
+        Semicolon                   | ;
+        Colon                       | :
+        Slash                       | /
+        BackQuote                   | \`
+        Tilde                       | ~
+        OpenBracket                 | [
+        BackSlash                   | ＼
+        Yen                         | ￥
+        CloseBracket                | ]
+        Quote                       | '
+        DoubleQuote                 | "
+        Underscore                  | _
+        Asterisk                    | \*
+        Atmark                      | @
+        Caret                       | ^
+        NumLock
+        Divide                      | / (テンキー)
+        Multiply                    | * (テンキー)
+        Subtract                    | - (テンキー)
+        Add                         | + (テンキー)
+        Decimal                     | . (テンキー)
+        Num0 ～ Num9                | 0-9 (テンキー)
+        F1 ～ F12
+        Left, Right, Up, Down
+        Space
+        Tab
+        Back                        バックスペース
+        Enter/Return
+        Escape/Esc
+        CapsLock/Caps/Capital
+        Apps                        アプリケーションキー
+        Insert
+        Delete
+        Home
+        End
+        PageUp
+        PageDown
+        Alt
+        LAlt
+        RAlt
+        Ctrl
+        LCtrl
+        RCtrl
+        Shift
+        LShift
+        RShift
+        LWin
+        RWin
+        PrintScreen
+        ScrollLock
+        Pause
+        | (0) ～ (255)              仮想キーコード指定
+        =========================   ===============================
+
+    Colon や Semicolon など、一部の記号キーは、キーボードタイプによって位置が異なります。
+    たとえば、日本語キーボードでは、BackQuote は Atmark と 同じ意味になります。
+    英語キーボードでは、BackQuote は Tilde と同じ意味になります。
 
 
 APIリファレンス
