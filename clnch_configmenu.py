@@ -386,7 +386,9 @@ def _configHotKeyBehavior( main_window ):
 
 
 def _editConfigFile( main_window ):
-    main_window.command_Edit( [ main_window.config_filename ] )
+    info = ckit.CommandInfo()
+    info.args = [ main_window.config_filename ]
+    main_window.command.Edit(info)
     return False
 
 def _reloadConfigFile( main_window ):

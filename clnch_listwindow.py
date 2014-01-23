@@ -76,6 +76,8 @@ class ListWindow( ckit.Window ):
             )
         self.show(show)
 
+        self.command = ckit.CommandMap(self)
+
         self.title = title
         self.items = items
         self.scroll_info = ckit.ScrollInfo()
@@ -122,14 +124,14 @@ class ListWindow( ckit.Window ):
     #
     def configure(self):
         self.keymap = ckit.Keymap()
-        self.keymap[ "Up" ] = self.command_CursorUp
-        self.keymap[ "Down" ] = self.command_CursorDown
-        self.keymap[ "PageUp" ] = self.command_CursorPageUp
-        self.keymap[ "PageDown" ] = self.command_CursorPageDown
-        self.keymap[ "Return" ] = self.command_Enter
-        self.keymap[ "Escape" ] = self.command_Cancel
+        self.keymap[ "Up" ] = self.command.CursorUp
+        self.keymap[ "Down" ] = self.command.CursorDown
+        self.keymap[ "PageUp" ] = self.command.CursorPageUp
+        self.keymap[ "PageDown" ] = self.command.CursorPageDown
+        self.keymap[ "Return" ] = self.command.Enter
+        self.keymap[ "Escape" ] = self.command.Cancel
         if not self.onekey_search:
-            self.keymap[ "F" ] = self.command_IncrementalSearch
+            self.keymap[ "F" ] = self.command.IncrementalSearch
         ckit.callConfigFunc("configure_ListWindow",self)
 
     ## リストの項目を１つ削除する
@@ -173,7 +175,7 @@ class ListWindow( ckit.Window ):
             return
 
         self.result_mod = mod
-        func()
+        func( ckit.CommandInfo() )
 
         return True
 
@@ -323,26 +325,42 @@ class ListWindow( ckit.Window ):
         self.select = -1
         self.quit()
 
+    #--------------------------------------------------------------------------
+
+    def executeCommand( self, name, info ):
+        try:
+            command = getattr( self, "command_" + name )
+        except AttributeError:
+            return False
+
+        command(info)
+        return True
+
+    def enumCommand(self):
+        for attr in dir(self):
+            if attr.startswith("command_"):
+                yield attr[ len("command_") : ]
+
     #--------------------------------------------------------
     # ここから下のメソッドはキーに割り当てることができる
     #--------------------------------------------------------
 
     ## カーソルを1つ上に移動させる
-    def command_CursorUp(self):
+    def command_CursorUp( self, info ):
         self.select -= 1
         if self.select<0 : self.select=0
         self.scroll_info.makeVisible( self.select, self.itemsHeight() )
         self.paint()
 
     ## カーソルを1つ下に移動させる
-    def command_CursorDown(self):
+    def command_CursorDown( self, info ):
         self.select += 1
         if self.select>len(self.items)-1 : self.select=len(self.items)-1
         self.scroll_info.makeVisible( self.select, self.itemsHeight() )
         self.paint()
 
     ## 1ページ上方向にカーソルを移動させる
-    def command_CursorPageUp(self):
+    def command_CursorPageUp( self, info ):
         if self.isearch:
             return
         if self.select>self.scroll_info.pos :
@@ -354,7 +372,7 @@ class ListWindow( ckit.Window ):
         self.paint()
 
     ## 1ページ下方向にカーソルを移動させる
-    def command_CursorPageDown(self):
+    def command_CursorPageDown( self, info ):
         if self.isearch:
             return
         if self.select<self.scroll_info.pos+self.itemsHeight()-1:
@@ -366,15 +384,15 @@ class ListWindow( ckit.Window ):
         self.paint()
 
     ## 決定する
-    def command_Enter(self):
+    def command_Enter( self, info ):
         self.quit()
 
     ## キャンセルする
-    def command_Cancel(self):
+    def command_Cancel( self, info ):
         self.cancel()
 
     ## インクリメンタルサーチを行う
-    def command_IncrementalSearch(self):
+    def command_IncrementalSearch( self, info ):
         
         def finish():
             if self.plane_statusbar:
