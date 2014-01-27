@@ -106,7 +106,7 @@ def configure_ListWindow(window):
     # --------------------------------------------------------------------
     # F1 キーでヘルプファイルを表示する
 
-    def command_Help():
+    def command_Help(info):
         print( "Helpを起動 :" )
         help_path = os.path.join( getAppExePath(), 'doc\\index.html' )
         shellExecute( None, help_path, "", "" )

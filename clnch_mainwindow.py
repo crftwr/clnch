@@ -312,7 +312,7 @@ class MainWindow( ckit.Window ):
         class CommandLine:
 
             def __init__( commandline_self ):
-                pass
+                commandline_self.planned_command_list = []
                 
             def _onKeyDown( commandline_self, vk, mod ):
             
@@ -418,6 +418,30 @@ class MainWindow( ckit.Window ):
                 window_rect = self.getWindowRect()
                 self.setPosSize( window_rect[0], window_rect[1], new_width, self.height(), 0 )                    
 
+            def planCommand( commandline_self, command, info, history ):
+                commandline_self.planned_command_list.append( ( command, info, history ) )
+
+            def executeCommand( commandline_self, command, info, history_item, quit ):
+
+                try:
+                    result = command(info)
+                except Exception as e:
+                    print( e )
+                    return
+    
+                if isinstance(result,str):
+                    commandline_self.setText(result)
+                    commandline_self.updateWindowWidth(result)
+                    commandline_self.setSelection( [ 0, len(result) ] )
+                    commandline_self.paint()
+                    return
+
+                if history_item!=None:
+                    commandline_self.appendHistory( history_item )
+
+                if quit:
+                    commandline_self.quit()
+
             def appendHistory(commandline_self,newentry):
                 newentry_lower = newentry.lower()
                 for i in range(len(self.commandline_history)):
@@ -473,6 +497,9 @@ class MainWindow( ckit.Window ):
         self.updateThemeSize()
 
         self.paint(PAINT_STATUS_BAR)
+
+        for command, info, history in commandline.planned_command_list:
+            commandline.executeCommand( command, info, history, quit=False )
 
         return result[0]
 
@@ -853,7 +880,7 @@ class MainWindow( ckit.Window ):
             clnch_commandline.commandline_Calculator(self),
         ]
         
-        self.launcher.command.list = [
+        self.launcher.command_list = [
             ( "Edit",      self.command.Edit ),
             ( "History",   self.command.History ),
             ( "Command",   self.command.CommandList ),
@@ -1005,11 +1032,18 @@ class MainWindow( ckit.Window ):
                     return
             text = commandline.getText()    
             args = text.split(';')
+
             if append_history:
                 history_item = text
             else:
                 history_item = None
-            clnch_commandline.executeCommand( commandline, func, args, 0, history_item, quit=quit )
+            
+            info = ckit.CommandInfo()
+            info.args = args
+            info.mod = 0
+
+            commandline.executeCommand( func, info, history_item, quit=quit )
+
             return True
 
         def onEnter( commandline, text, mod ):

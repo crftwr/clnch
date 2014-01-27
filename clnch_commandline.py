@@ -1,7 +1,5 @@
 ﻿import os
 import fnmatch
-import inspect
-import traceback
 
 import pyauto
 
@@ -16,42 +14,6 @@ import clnch_native
 ## @{
 
 #--------------------------------------------------------------------
-
-def executeCommand( commandline, func, args, mod, history_item, quit ):
-
-    # 引数を受け取らない関数やメソッドを許容するためのトリック                
-    argspec = inspect.getargspec(func)
-    if inspect.ismethod(func):
-        num_args = len(argspec[0])-1
-    else:
-        num_args = len(argspec[0])
-
-    try:
-        if num_args==0:
-            result = func()
-        elif num_args==1:
-            result = func(args)
-        elif num_args==2:
-            result = func(args,mod)
-        else:
-            raise TypeError("arg spec is not acceptable.")
-    except Exception as e:
-        print( e )
-        return
-    
-    if isinstance(result,str):
-        commandline.setText(result)
-        commandline.updateWindowWidth(result)
-        commandline.setSelection( [ 0, len(result) ] )
-        commandline.paint()
-        return
-
-    if history_item!=None:
-        commandline.appendHistory( history_item )
-
-    if quit:
-        commandline.quit()
-
 
 ## コマンドラインからのコマンド実行機能
 class commandline_Launcher:
@@ -121,11 +83,20 @@ class commandline_Launcher:
         
         command_name = args[0].lower()
         
+        def found(command):
+            
+            info = ckit.CommandInfo()
+            info.args = args[1:]
+            info.mod = mod
+
+            commandline.planCommand( command, info, text )
+            commandline.quit()
+        
         for command in self.command_list:
             if command[0].lower() == command_name:
-                executeCommand( commandline, command[1], args[1:], mod, text, quit=True )
+                found(command[1])
                 return True
-        
+
         return False
     
     def onStatusString( self, text ):
@@ -153,8 +124,15 @@ class commandline_ExecuteFile:
         for association in self.main_window.association_list:
             for pattern in association[0].split():
                 if fnmatch.fnmatch( file, pattern ):
-                    executeCommand( commandline, association[1], args, mod, text, quit=True )
-                    return
+
+                    info = ckit.CommandInfo()
+                    info.args = args
+                    info.mod = mod
+
+                    commandline.planCommand( association[1], info, text )
+                    commandline.quit()
+
+                    return True
         
         joint_args = clnch_misc.joinArgs(args[1:])
         
