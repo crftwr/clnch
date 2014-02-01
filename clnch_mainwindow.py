@@ -1263,9 +1263,6 @@ class MainWindow( ckit.Window ):
     #
     #  指定されたプログラムを起動するコマンドオブジェクトを生成し、返します。
     #
-    #  実際にアプリケーションを起動する機能を持っているのは、この関数から返される関数であり、
-    #  この関数自体はその機能を持っていないことに注意が必要です。
-    #
     #  引数verbには、実行する操作を文字列で渡します。指定可能な文字列は対象によって異なりますが、一般的には次のような操作が指定可能です。
     #
     #  open
@@ -1289,7 +1286,7 @@ class MainWindow( ckit.Window ):
     #
     #  プログラムの起動は、サブスレッドの中で行われます。
     #
-    def command_ShellExecute( self, verb, filename, param, directory, swmode=None ):
+    def ShellExecuteCommand( self, verb, filename, param, directory, swmode=None ):
 
         def jobShellExecute( job_item ):
         
@@ -1315,12 +1312,17 @@ class MainWindow( ckit.Window ):
         def jobShellExecuteFinished( job_item ):
             pass
 
-        def _shellExecute(info):
+        def command_ShellExecute(info):
             job_item = ckit.JobItem( jobShellExecute, jobShellExecuteFinished )
             job_item.args = info.args
             ckit.JobQueue.defaultQueue().enqueue(job_item)
 
-        return _shellExecute
+        return command_ShellExecute
+
+    # 互換目的。廃止予定
+    def command_ShellExecute( self, verb, filename, param, directory, swmode=None ):
+        print( 'Warning : "%s"は古い書式です。"%s"を使ってください。' % ("command_ShellExecute","ShellExecuteCommand") )
+        return self.ShellExecuteCommand( verb, filename, param, directory, swmode )
 
     ## URLを開くコマンドオブジェクトを生成する
     #
@@ -1328,10 +1330,7 @@ class MainWindow( ckit.Window ):
     #  @param url           URL
     #  @param encoding      URLの文字列のエンコーディング
     #
-    #  実際にURLを開く機能を持っているのは、この関数から返される関数であり、
-    #  この関数自体はその機能を持っていないことに注意が必要です。
-    #
-    def command_URL( self, url, encoding="utf8" ):
+    def URLCommand( self, url, encoding="utf8" ):
 
         def jobShellExecute( job_item ):
         
@@ -1351,12 +1350,17 @@ class MainWindow( ckit.Window ):
         def jobShellExecuteFinished( job_item ):
             pass
 
-        def _shellExecute(info):
+        def command_URL(info):
             job_item = ckit.JobItem( jobShellExecute, jobShellExecuteFinished )
             job_item.args = info.args
             ckit.JobQueue.defaultQueue().enqueue(job_item)
 
-        return _shellExecute
+        return command_URL
+
+    # 互換目的。廃止予定
+    def command_URL( self, url, encoding="utf8" ):
+        print( 'Warning : "%s"は古い書式です。"%s"を使ってください。' % ("command_URL","URLCommand") )
+        return self.URLCommand( url, encoding )
 
     ## コマンド履歴リストを開く
     #
