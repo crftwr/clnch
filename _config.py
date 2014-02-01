@@ -8,7 +8,7 @@ def configure(window):
 
     # --------------------------------------------------------------------
     # F1 キーでヘルプファイルを起動する
-    def command_Help():
+    def command_Help(info):
         print( "Helpを起動 :" )
         help_path = os.path.join( getAppExePath(), 'doc\\index.html' )
         shellExecute( None, help_path, "", "" )
@@ -18,11 +18,11 @@ def configure(window):
 
     # --------------------------------------------------------------------
     # Ctrl-E で、入力中のファイルパスを編集する
-    window.cmd_keymap[ "C-E" ] = window.command_Edit
+    window.cmd_keymap[ "C-E" ] = window.command.Edit
 
     # --------------------------------------------------------------------
     # Alt-Space で、自動補完を一時的にOn/Offする
-    window.keymap[ "A-Space" ] = window.command_AutoCompleteToggle
+    window.keymap[ "A-Space" ] = window.command.AutoCompleteToggle
 
     # --------------------------------------------------------------------
     # テキストエディタを設定する
@@ -47,7 +47,7 @@ def configure(window):
     # 空欄コマンド
     #   コマンド名なしでEnterを押したときに実行されるコマンドです。
     #   この例では、ほかのアプリケーションをフォアグラウンド化するために使います。
-    def command_QuickActivate( args, mod ):
+    def command_QuickActivate(info):
 
         def callback( wnd, arg ):
             process_name, class_name = arg[0], arg[1]
@@ -57,11 +57,11 @@ def configure(window):
                 return False
             return True
 
-        if mod==MODKEY_SHIFT:
+        if info.mod==MODKEY_SHIFT:
             pyauto.Window.enum( callback, ["cfiler.exe",None] )
-        elif mod==MODKEY_CTRL:
+        elif info.mod==MODKEY_CTRL:
             pyauto.Window.enum( callback, ["notepad.exe","Notepad"] )
-        elif mod==MODKEY_SHIFT|MODKEY_CTRL:
+        elif info.mod==MODKEY_SHIFT|MODKEY_CTRL:
             pyauto.Window.enum( callback, ["mintty.exe","MinTTY"] )
 
     window.launcher.command_list += [ ( "", command_QuickActivate ) ]
@@ -71,12 +71,12 @@ def configure(window):
     #   ネットワークドライブを割り当てるか解除を行います。
     #    NetDrive;L;\\server\share : \\machine\public を Lドライブに割り当てます
     #    NetDrive;L                : Lドライブの割り当てを解除します
-    def command_NetDrive(args):
+    def command_NetDrive(info):
         
-        if len(args)>=1:
-            drive_letter = args[0]
-            if len(args)>=2:
-                path = args[1]
+        if len(info.args)>=1:
+            drive_letter = info.args[0]
+            if len(info.args)>=2:
+                path = info.args[1]
                 checkNetConnection(path)
                 if window.subProcessCall( [ "net", "use", drive_letter+":", os.path.normpath(path), "/yes" ], cwd=None, env=None, enable_cancel=False )==0:
                     print( "%s に %sドライブを割り当てました。" % ( path, drive_letter ) )
@@ -106,7 +106,7 @@ def configure_ListWindow(window):
     # --------------------------------------------------------------------
     # F1 キーでヘルプファイルを表示する
 
-    def command_Help():
+    def command_Help(info):
         print( "Helpを起動 :" )
         help_path = os.path.join( getAppExePath(), 'doc\\index.html' )
         shellExecute( None, help_path, "", "" )

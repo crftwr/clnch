@@ -129,6 +129,8 @@ class MainWindow( ckit.Window ):
 
         self.updateHotKey()
         
+        self.command = ckit.CommandMap(self)
+
         self.launcher = clnch_commandline.commandline_Launcher(self)
 
         self.keydown_hook = None
@@ -310,7 +312,7 @@ class MainWindow( ckit.Window ):
         class CommandLine:
 
             def __init__( commandline_self ):
-                pass
+                commandline_self.planned_command_list = []
                 
             def _onKeyDown( commandline_self, vk, mod ):
             
@@ -416,6 +418,30 @@ class MainWindow( ckit.Window ):
                 window_rect = self.getWindowRect()
                 self.setPosSize( window_rect[0], window_rect[1], new_width, self.height(), 0 )                    
 
+            def planCommand( commandline_self, command, info, history ):
+                commandline_self.planned_command_list.append( ( command, info, history ) )
+
+            def executeCommand( commandline_self, command, info, history_item, quit ):
+
+                try:
+                    result = command(info)
+                except Exception as e:
+                    print( e )
+                    return
+    
+                if isinstance(result,str):
+                    commandline_self.setText(result)
+                    commandline_self.updateWindowWidth(result)
+                    commandline_self.setSelection( [ 0, len(result) ] )
+                    commandline_self.paint()
+                    return
+
+                if history_item!=None:
+                    commandline_self.appendHistory( history_item )
+
+                if quit:
+                    commandline_self.quit()
+
             def appendHistory(commandline_self,newentry):
                 newentry_lower = newentry.lower()
                 for i in range(len(self.commandline_history)):
@@ -471,6 +497,9 @@ class MainWindow( ckit.Window ):
         self.updateThemeSize()
 
         self.paint(PAINT_STATUS_BAR)
+
+        for command, info, history in commandline.planned_command_list:
+            commandline.executeCommand( command, info, history, quit=False )
 
         return result[0]
 
@@ -831,16 +860,16 @@ class MainWindow( ckit.Window ):
         ckit.Keymap.init()
         self.cmd_keymap = ckit.Keymap()
         self.keymap = ckit.Keymap()
-        self.keymap[ "C-K" ] = self.command_RemoveHistory
-        self.cmd_keymap[ "C-Period" ] = self.command_MusicList
-        self.cmd_keymap[ "C-S-Period" ] = self.command_MusicStop
+        self.keymap[ "C-K" ] = self.command.RemoveHistory
+        self.cmd_keymap[ "C-Period" ] = self.command.MusicList
+        self.cmd_keymap[ "C-S-Period" ] = self.command.MusicStop
         if default_keymap=="101":
-            self.cmd_keymap[ "C-Slash" ] = self.command_ContextMenu
+            self.cmd_keymap[ "C-Slash" ] = self.command.ContextMenu
         elif default_keymap=="106":
-            self.cmd_keymap[ "C-BackSlash" ] = self.command_ContextMenu
+            self.cmd_keymap[ "C-BackSlash" ] = self.command.ContextMenu
 
         self.association_list = [
-            ( "*.mp3 *.wma *.wav", self.command_MusicPlay ), 
+            ( "*.mp3 *.wma *.wav", self.command.MusicPlay ), 
         ]
 
         self.commandline_list = [
@@ -852,13 +881,13 @@ class MainWindow( ckit.Window ):
         ]
         
         self.launcher.command_list = [
-            ( "Edit",      self.command_Edit ),
-            ( "History",   self.command_History ),
-            ( "Command",   self.command_CommandList ),
-            ( "Config",    self.command_ConfigMenu ),
-            ( "Reload",    self.command_Reload ),
-            ( "About",     self.command_About ),
-            ( "Quit",      self.command_Quit ),
+            ( "Edit",      self.command.Edit ),
+            ( "History",   self.command.History ),
+            ( "Command",   self.command.CommandList ),
+            ( "Config",    self.command.ConfigMenu ),
+            ( "Reload",    self.command.Reload ),
+            ( "About",     self.command.About ),
+            ( "Quit",      self.command.Quit ),
         ]
         
         self.loadCommandFromIniFile()
@@ -911,7 +940,7 @@ class MainWindow( ckit.Window ):
             command_tuple = eval( command_string )
             command_name, command_args = command_tuple[0], command_tuple[1:]
 
-            command = self.command_ShellExecute( None, *command_args )
+            command = self.command.ShellExecute( None, *command_args )
             self.launcher.command_list.append( ( command_name, command ) )
 
             i+=1
@@ -926,7 +955,7 @@ class MainWindow( ckit.Window ):
                 break
             i+=1
         clnch_ini.set( "COMMANDLIST", "command_%d"%(i,), str(tuple(command_tuple)) )
-        command = self.command_ShellExecute( None, *command_tuple[1:] )
+        command = self.command.ShellExecute( None, *command_tuple[1:] )
         self.launcher.command_list.append( ( command_tuple[0], command ) )    
 
     #--------------------------------------------------------------------------
@@ -1003,11 +1032,18 @@ class MainWindow( ckit.Window ):
                     return
             text = commandline.getText()    
             args = text.split(';')
+
             if append_history:
                 history_item = text
             else:
                 history_item = None
-            clnch_commandline.executeCommand( commandline, func, args, 0, history_item, quit=quit )
+            
+            info = ckit.CommandInfo()
+            info.args = args
+            info.mod = 0
+
+            commandline.executeCommand( func, info, history_item, quit=quit )
+
             return True
 
         def onEnter( commandline, text, mod ):
@@ -1067,6 +1103,22 @@ class MainWindow( ckit.Window ):
         self.killHotKey( self.hotkey_Activate )
         self.setHotKey( activate_vk, activate_mod, self.hotkey_Activate )
 
+    #--------------------------------------------------------------------------
+
+    def executeCommand( self, name, info ):
+        try:
+            command = getattr( self, "command_" + name )
+        except AttributeError:
+            return False
+
+        command(info)
+        return True
+
+    def enumCommand(self):
+        for attr in dir(self):
+            if attr.startswith("command_"):
+                yield attr[ len("command_") : ]
+
     #--------------------------------------------------------
     # ここから下のメソッドはキーに割り当てることができる
     #--------------------------------------------------------
@@ -1075,10 +1127,10 @@ class MainWindow( ckit.Window ):
     #
     #  MainWindow.editor に設定されたテキストエディタを使って、引数に与えられたファイルを開きます。
     #
-    def command_Edit( self, args ):
+    def command_Edit( self, info ):
 
         def edit():
-            for arg in args:
+            for arg in info.args:
                 if not os.path.isfile(arg) : continue
                 if callable(self.editor):
                     self.editor(arg)
@@ -1092,13 +1144,13 @@ class MainWindow( ckit.Window ):
     #
     #  引数に与えられたファイルに関して、コンテキストメニューを開きます。
     #
-    def command_ContextMenu( self, args ):
+    def command_ContextMenu( self, info ):
         
-        if len(args)<=0 :
+        if len(info.args)<=0 :
             return
-        if not os.path.exists(args[0]) :
+        if not os.path.exists(info.args[0]) :
             return
-        dirname, name = os.path.split( os.path.normpath(args[0]) )
+        dirname, name = os.path.split( os.path.normpath(info.args[0]) )
         
         self.commandline_edit.closeList()
         
@@ -1110,13 +1162,13 @@ class MainWindow( ckit.Window ):
     #
     #  CraftLaunch を終了します。
     #
-    def command_Quit(self):
+    def command_Quit( self, info ):
         self.quit_requested = True
         self.quit()
 
     ## 音楽プレイヤのファイルリストを開く
     #
-    def command_MusicList(self):
+    def command_MusicList( self, info ):
 
         if not self.musicplayer:
             self.setStatusMessage( "Musicがありません", 1000, error=True )
@@ -1140,7 +1192,7 @@ class MainWindow( ckit.Window ):
                 return True
 
             elif vk==VK_OEM_PERIOD and mod==MODKEY_CTRL|MODKEY_SHIFT:
-                self.command_MusicStop()
+                self.command.MusicStop()
                 list_window.cancel()
                 return True
 
@@ -1170,12 +1222,12 @@ class MainWindow( ckit.Window ):
 
     ## 音楽の再生を開始する
     #
-    def command_MusicPlay( self, args ):
+    def command_MusicPlay( self, info ):
 
         playlist = []
         selection = 0
 
-        for arg in args:
+        for arg in info.args:
             dirname, name = os.path.split(arg)
             ext = os.path.splitext(arg)[1].lower()
             fileinfo_list = clnch_native.findFile( os.path.join(dirname,"*") )
@@ -1183,7 +1235,7 @@ class MainWindow( ckit.Window ):
                 if os.path.splitext(fileinfo[0])[1].lower()==ext:
                     if not (fileinfo[3] & ckit.FILE_ATTRIBUTE_DIRECTORY):
                         playlist.append( ckit.joinPath( dirname, fileinfo[0] ) )
-                        if arg==args[0] and fileinfo[0].lower()==name.lower():
+                        if arg==info.args[0] and fileinfo[0].lower()==name.lower():
                             selection = len(playlist)-1
 
         if len(playlist) :
@@ -1194,7 +1246,7 @@ class MainWindow( ckit.Window ):
 
     ## 音楽の再生を停止する
     #
-    def command_MusicStop(self):
+    def command_MusicStop( self, info ):
         if self.musicplayer:
             self.musicplayer.destroy()
             self.musicplayer = None
@@ -1263,9 +1315,9 @@ class MainWindow( ckit.Window ):
         def jobShellExecuteFinished( job_item ):
             pass
 
-        def _shellExecute( args ):
+        def _shellExecute(info):
             job_item = ckit.JobItem( jobShellExecute, jobShellExecuteFinished )
-            job_item.args = args
+            job_item.args = info.args
             ckit.JobQueue.defaultQueue().enqueue(job_item)
 
         return _shellExecute
@@ -1299,16 +1351,16 @@ class MainWindow( ckit.Window ):
         def jobShellExecuteFinished( job_item ):
             pass
 
-        def _shellExecute( args ):
+        def _shellExecute(info):
             job_item = ckit.JobItem( jobShellExecute, jobShellExecuteFinished )
-            job_item.args = args
+            job_item.args = info.args
             ckit.JobQueue.defaultQueue().enqueue(job_item)
 
         return _shellExecute
 
     ## コマンド履歴リストを開く
     #
-    def command_History(self):
+    def command_History( self, info ):
 
         items = []
         
@@ -1346,7 +1398,7 @@ class MainWindow( ckit.Window ):
 
     ## 入力中の文字列をコマンド履歴から削除する
     #
-    def command_RemoveHistory( self ):
+    def command_RemoveHistory( self, info ):
         text = self.commandline_edit.getText()
         try:
             self.commandline_history.remove(text)
@@ -1356,7 +1408,7 @@ class MainWindow( ckit.Window ):
 
     ## コマンドのリストを開く
     #
-    def command_CommandList(self):
+    def command_CommandList( self, info ):
 
         items = []
         select = 0
@@ -1382,12 +1434,12 @@ class MainWindow( ckit.Window ):
             def onKeyDown( vk, mod ):
             
                 if vk==VK_E and mod==0:
-                    list_window.command_Enter()
+                    list_window.command.Enter()
                     return True
 
                 elif vk==VK_E and mod==MODKEY_SHIFT:
                     edit_new[0] = True
-                    list_window.command_Enter()
+                    list_window.command.Enter()
                     return True
 
                 elif vk==VK_UP and mod==MODKEY_SHIFT:
@@ -1397,7 +1449,7 @@ class MainWindow( ckit.Window ):
                         del items[select]
                         select -= 1
                         items.insert( select, item )
-                        list_window.command_CursorUp()
+                        list_window.command.CursorUp()
 
                 elif vk==VK_DOWN and mod==MODKEY_SHIFT:
                     select = list_window.getResult()
@@ -1406,7 +1458,7 @@ class MainWindow( ckit.Window ):
                         del items[select]
                         select += 1
                         items.insert( select, item )
-                        list_window.command_CursorDown()
+                        list_window.command.CursorDown()
 
                 elif vk==VK_DELETE and mod==0:
                     select = list_window.getResult()
@@ -1454,60 +1506,60 @@ class MainWindow( ckit.Window ):
 
     ## 設定メニューを開く
     #
-    def command_ConfigMenu(self):
+    def command_ConfigMenu( self, info ):
         clnch_configmenu.doConfigMenu(self)
 
     ## 設定ファイルをリロードする
     #
-    def command_Reload(self):
+    def command_Reload( self, info ):
         self.configure()
         print( "設定スクリプトをリロードしました.\n" )
 
     ## コンソールウインドウを開く
     #
-    def command_ConsoleOpen(self):
+    def command_ConsoleOpen( self, info ):
         self.console_window.show(True)
         self.activate()
 
     ## コンソールウインドウを閉じる
     #
-    def command_ConsoleClose(self):
+    def command_ConsoleClose( self, info ):
         self.console_window.show(False)
 
     ## コンソールウインドウの表示状態をトグルで切り替える
     #
-    def command_ConsoleToggle(self):
+    def command_ConsoleToggle( self, info ):
         if self.console_window.isVisible():
-            self.command_ConsoleClose()
+            self.command.ConsoleClose()
         else:
-            self.command_ConsoleOpen()
+            self.command.ConsoleOpen()
 
     ## 自動補完をOnにする
     #
-    def command_AutoCompleteOn(self):
+    def command_AutoCompleteOn( self, info ):
         if self.commandline_edit:
             print( "自動補完 ON\n" )
             self.commandline_edit.setAutoComplete(True)
 
     ## 自動補完をOffにする
     #
-    def command_AutoCompleteOff(self):
+    def command_AutoCompleteOff( self, info ):
         if self.commandline_edit:
             print( "自動補完 OFF\n" )
             self.commandline_edit.setAutoComplete(False)
 
     ## 自動補完のOn/Offをトグルで切り替える
     #
-    def command_AutoCompleteToggle(self):
+    def command_AutoCompleteToggle( self, info ):
         if self.commandline_edit:
             if self.commandline_edit.getAutoComplete():
-                self.command_AutoCompleteOff()
+                self.command.AutoCompleteOff()
             else:    
-                self.command_AutoCompleteOn()
+                self.command.AutoCompleteOn()
 
     ## CraftLaunchのバージョン情報を表示する
     #
-    def command_About(self):
+    def command_About( self, info ):
         print( clnch_resource.startupString() )
 
 #--------------------------------------------------------------------

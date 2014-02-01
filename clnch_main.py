@@ -82,6 +82,7 @@ import clnch_misc
 if __name__ == "__main__":
 
     ckit.registerWindowClass( "Clnch" )
+    ckit.registerCommandInfoConstructor( ckit.CommandInfo )
 
     sys.path[0:0] = [
         os.path.join( ckit.getAppExePath(), 'extension' ),
