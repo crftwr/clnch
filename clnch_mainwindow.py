@@ -291,6 +291,7 @@ class MainWindow( ckit.Window ):
     #  @param autofix_list              入力確定をする文字のリスト
     #  @param update_handler            コマンド入力欄の変更があったときに通知を受けるためのハンドラ
     #  @param candidate_handler         補完候補を列挙するためのハンドラ
+    #  @param candidate_remove_handler  補完候補を削除するためのハンドラ
     #  @param status_handler            コマンド入力欄の右側に表示されるステータス文字列を返すためのハンドラ
     #  @param keydown_handler           コマンド入力欄でキー入力が行われたときのハンドラ
     #  @param char_handler              コマンド入力欄で文字入力が行われたときのハンドラ
@@ -301,7 +302,7 @@ class MainWindow( ckit.Window ):
     #  コマンド入力欄で任意の文字列の入力を受け付けるための関数です。
     #  コマンドを解釈/実行するのは、このメソッドの呼び出し元の役割です。
     #
-    def commandLine( self, title, text="", selection=None, auto_complete=False, autofix_list=None, update_handler=None, candidate_handler=None, status_handler=None, keydown_handler=None, char_handler=None, enter_handler=None, escape_handler=None ):
+    def commandLine( self, title, text="", selection=None, auto_complete=False, autofix_list=None, update_handler=None, candidate_handler=None, candidate_remove_handler=None, status_handler=None, keydown_handler=None, char_handler=None, enter_handler=None, escape_handler=None ):
 
         if title:
             title = " " + title + " "
@@ -466,7 +467,7 @@ class MainWindow( ckit.Window ):
 
         commandline = CommandLine()
         
-        self.commandline_edit = ckit.EditWidget( self, title_width, self.height()-1, self.width()-title_width, 1, text, selection, auto_complete=auto_complete, no_bg=False, autofix_list=autofix_list, update_handler=commandline._onUpdate, candidate_handler=candidate_handler )
+        self.commandline_edit = ckit.EditWidget( self, title_width, self.height()-1, self.width()-title_width, 1, text, selection, auto_complete=auto_complete, no_bg=False, autofix_list=autofix_list, update_handler=commandline._onUpdate, candidate_handler=candidate_handler, candidate_remove_handler=candidate_remove_handler )
         self.commandline_edit.setImeRect( ( 0, 0, clnch_ini.getint( "GEOMETRY", "max_width", 80 ), 1 ) )
         self.keydown_hook = commandline._onKeyDown
         self.char_hook = commandline._onChar
@@ -1009,6 +1010,14 @@ class MainWindow( ckit.Window ):
 
             return candidate_list, pos_arg + pos_dir
 
+        def onCandidateRemove(text):
+            try:
+                self.commandline_history.remove(text)
+                return True
+            except ValueError:
+                pass
+            return False
+
         def statusString( update_info ):
             if update_info.text:
                 for commandline_function in self.commandline_list:
@@ -1058,7 +1067,7 @@ class MainWindow( ckit.Window ):
             return True
 
         auto_complete = clnch_ini.getint( "MISC", "auto_complete", "1" )
-        self.commandLine( "", text=text, selection=selection, auto_complete=auto_complete, autofix_list=["\\/",".",";"], candidate_handler=onCandidate, status_handler=statusString, keydown_handler=onKeyDown, enter_handler=onEnter, escape_handler=onEscape )
+        self.commandLine( "", text=text, selection=selection, auto_complete=auto_complete, autofix_list=["\\/",".",";"], candidate_handler=onCandidate, candidate_remove_handler=onCandidateRemove, status_handler=statusString, keydown_handler=onKeyDown, enter_handler=onEnter, escape_handler=onEscape )
 
     def inactiveMessageLoop(self):
 
@@ -1403,12 +1412,7 @@ class MainWindow( ckit.Window ):
     ## 入力中の文字列をコマンド履歴から削除する
     #
     def command_RemoveHistory( self, info ):
-        text = self.commandline_edit.getText()
-        try:
-            self.commandline_history.remove(text)
-        except ValueError:
-            return    
-        self.commandline_edit.insertText("")
+        self.commandline_edit.removeCandidate()
 
     ## コマンドのリストを開く
     #
