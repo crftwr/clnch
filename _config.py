@@ -31,7 +31,7 @@ def configure(window):
     # --------------------------------------------------------------------
     # ファイルタイプごとの動作設定
     window.association_list += [
-        ( "*.mpg *.mpeg *.avi *.wmv", window.command_ShellExecute( None, "wmplayer.exe", "/prefetch:7 /Play %param%", "" ) ),
+        ( "*.mpg *.mpeg *.avi *.wmv", window.ShellExecuteCommand( None, "wmplayer.exe", "/prefetch:7 /Play %param%", "" ) ),
     ]
 
     # --------------------------------------------------------------------
@@ -91,12 +91,12 @@ def configure(window):
     # コマンドを登録する
     window.launcher.command_list += [
         ( "NetDrive",  command_NetDrive ),
-        ( "Cfiler",    window.command_ShellExecute( None, "C:/ols/cfiler/cfiler.exe", "", "" ) ),
-        ( "Peggy",     window.command_ShellExecute( None, "C:/ols/anchor/peggy/peggypro.exe", "", "" ) ),
-        ( "Becky",     window.command_ShellExecute( None, "C:/ols/becky/B2.exe", "", "" ) ),
-        ( "FireFox",   window.command_ShellExecute( None, "C:/Program Files/Mozilla Firefox/firefox.exe", "", "C:/Program Files/Mozilla Firefox" ) ),
-        ( "Google",    window.command_URL( "http://www.google.com/search?ie=utf8&q=%param%", encoding="utf8" ) ),
-        ( "Eijiro",    window.command_URL( "http://eow.alc.co.jp/%param%/UTF-8/", encoding="utf8" ) ),
+        ( "Cfiler",    window.ShellExecuteCommand( None, "C:/ols/cfiler/cfiler.exe", "", "" ) ),
+        ( "Peggy",     window.ShellExecuteCommand( None, "C:/ols/anchor/peggy/peggypro.exe", "", "" ) ),
+        ( "Becky",     window.ShellExecuteCommand( None, "C:/ols/becky/B2.exe", "", "" ) ),
+        ( "FireFox",   window.ShellExecuteCommand( None, "C:/Program Files/Mozilla Firefox/firefox.exe", "", "C:/Program Files/Mozilla Firefox" ) ),
+        ( "Google",    window.UrlCommand( "http://www.google.com/search?ie=utf8&q=%param%", encoding="utf8" ) ),
+        ( "Eijiro",    window.UrlCommand( "http://eow.alc.co.jp/%param%/UTF-8/", encoding="utf8" ) ),
     ]
 
 

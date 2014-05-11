@@ -1330,7 +1330,7 @@ class MainWindow( ckit.Window ):
     #  @param url           URL
     #  @param encoding      URLの文字列のエンコーディング
     #
-    def URLCommand( self, url, encoding="utf8" ):
+    def UrlCommand( self, url, encoding="utf8" ):
 
         def jobShellExecute( job_item ):
         
@@ -1359,8 +1359,8 @@ class MainWindow( ckit.Window ):
 
     # 互換目的。廃止予定
     def command_URL( self, url, encoding="utf8" ):
-        print( 'Warning : "%s"は古い書式です。"%s"を使ってください。' % ("command_URL","URLCommand") )
-        return self.URLCommand( url, encoding )
+        print( 'Warning : "%s"は古い書式です。"%s"を使ってください。' % ("command_URL","UrlCommand") )
+        return self.UrlCommand( url, encoding )
 
     ## コマンド履歴リストを開く
     #
