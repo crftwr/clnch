@@ -941,7 +941,7 @@ class MainWindow( ckit.Window ):
             command_tuple = eval( command_string )
             command_name, command_args = command_tuple[0], command_tuple[1:]
 
-            command = self.command.ShellExecute( None, *command_args )
+            command = self.ShellExecuteCommand( None, *command_args )
             self.launcher.command_list.append( ( command_name, command ) )
 
             i+=1
@@ -956,7 +956,7 @@ class MainWindow( ckit.Window ):
                 break
             i+=1
         clnch_ini.set( "COMMANDLIST", "command_%d"%(i,), str(tuple(command_tuple)) )
-        command = self.command.ShellExecute( None, *command_tuple[1:] )
+        command = self.ShellExecuteCommand( None, *command_tuple[1:] )
         self.launcher.command_list.append( ( command_tuple[0], command ) )    
 
     #--------------------------------------------------------------------------
