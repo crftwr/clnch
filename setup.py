@@ -70,7 +70,7 @@ def fixup():
         os.mkdir(lib_dirname)
     
     for name in os.listdir(exe_dirname):
-        if ( fnmatch.fnmatch(name,"*.dll") or fnmatch.fnmatch(name,"*.pyd") ) and not name=="python33.dll":
+        if ( fnmatch.fnmatch(name,"*.dll") or fnmatch.fnmatch(name,"*.pyd") ) and not name=="python34.dll":
             old_path = os.path.join( exe_dirname, name )
             new_path = os.path.join( lib_dirname, name )
 
