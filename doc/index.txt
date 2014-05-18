@@ -137,6 +137,20 @@
     このソフトウェアはレジストリを使用しません。
 
 
+使用しているサードパーティ製ライブラリについて
+===============================================
+
+    このソフトウェアでは、以下のライブラリを使用しています。
+
+    Python Programming Language
+        http://www.python.org/
+
+    Pillow
+        https://github.com/python-imaging/Pillow
+
+    C/Migemo
+        http://www.kaoriya.net/
+
 
 キー割り当て
 =============
