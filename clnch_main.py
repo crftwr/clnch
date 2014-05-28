@@ -58,7 +58,7 @@ def sendIpc(wnd):
     print( "another CraftLaunch instance already exists." )
     print( "sending Ipc data." )
     
-    ckit.Window.sendIpc( wnd.getHWND(), ipc_data.getValue() )
+    ckit.TextWindow.sendIpc( wnd.getHWND(), ipc_data.getValue() )
     
     print( "done." )
 

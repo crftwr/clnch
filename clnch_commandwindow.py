@@ -10,7 +10,7 @@ COMMANDWINDOW_RESULT_OK     = 1
 
 #--------------------------------------------------------------------
 
-class CommandWindow( ckit.Window ):
+class CommandWindow( ckit.TextWindow ):
 
     FOCUS_NAME = 0
     FOCUS_FILE = 1
@@ -19,7 +19,7 @@ class CommandWindow( ckit.Window ):
 
     def __init__( self, x, y, parent_window, name, file, param, directory ):
 
-        ckit.Window.__init__(
+        ckit.TextWindow.__init__(
             self,
             x=x,
             y=y,

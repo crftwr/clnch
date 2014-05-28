@@ -55,7 +55,7 @@ class Log:
 #--------------------------------------------------------------------
 # コンソールウインドウ
 
-class ConsoleWindow(ckit.Window):
+class ConsoleWindow(ckit.TextWindow):
     
     def __init__( self, parent_window, debug=False ):
     
@@ -67,7 +67,7 @@ class ConsoleWindow(ckit.Window):
         
         self.active = False
 
-        ckit.Window.__init__(
+        ckit.TextWindow.__init__(
             self,
             x = self.window_normal_x,
             y = self.window_normal_y,
@@ -123,7 +123,7 @@ class ConsoleWindow(ckit.Window):
     
     def show( self, show, activate=True ):
         clnch_misc.adjustWindowPosition( self.parent_window, self, default_up=True )
-        ckit.Window.show( self, show, activate )
+        ckit.TextWindow.show( self, show, activate )
 
     def setAutoShow( self, auto_show ):
         self.auto_show = auto_show

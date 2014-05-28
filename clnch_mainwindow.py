@@ -48,7 +48,7 @@ PAINT_ALL                = PAINT_STATUS_BAR
 #  設定ファイル config.py の configure() に渡される window 引数は、MainWindow クラスのオブジェクトです。
 #  CraftLaunch のさまざまな機能が、MainWindowのメソッドとして提供されています。
 #
-class MainWindow( ckit.Window ):
+class MainWindow( ckit.TextWindow ):
 
     def __init__( self, config_filename, debug=False, profile=False ):
     
@@ -81,7 +81,7 @@ class MainWindow( ckit.Window ):
         self.commandline_history = []
         self.commandLineHistoryLoad()
 
-        ckit.Window.__init__(
+        ckit.TextWindow.__init__(
             self,
             x=0,
             y=0,
@@ -175,7 +175,7 @@ class MainWindow( ckit.Window ):
         self.console_window.unregisterStdio()
         self.console_window.destroy()
         ckit.destroyTemp()
-        ckit.Window.destroy(self)
+        ckit.TextWindow.destroy(self)
 
     def onTimer(self):
         ckit.JobQueue.checkAll()

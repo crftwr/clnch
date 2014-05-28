@@ -19,13 +19,13 @@ import clnch_misc
 #  
 #  設定ファイル config.py の configure_ListWindow に渡される window 引数は、ListWindow クラスのオブジェクトです。
 #
-class ListWindow( ckit.Window ):
+class ListWindow( ckit.TextWindow ):
 
     def __init__( self, x, y, min_width, min_height, max_width, max_height, parent_window, show=True, title="", items=[], initial_select=0, onekey_search=True, onekey_decide=False, return_modkey=False, keydown_hook=None, statusbar_handler=None ):
 
         self.active = False
 
-        ckit.Window.__init__(
+        ckit.TextWindow.__init__(
             self,
             x=x,
             y=y,

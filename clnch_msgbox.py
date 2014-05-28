@@ -20,7 +20,7 @@ MSGBOX_RESULT_NO     = 3
 
 #--------------------------------------------------------------------
 
-class MessageBox( ckit.Window ):
+class MessageBox( ckit.TextWindow ):
 
     BUTTON_OK  = 0
     BUTTON_YES = 1
@@ -28,7 +28,7 @@ class MessageBox( ckit.Window ):
 
     def __init__( self, x, y, parent_window, show=True, msgbox_type=MSGBOX_TYPE_OK, title="", message="", return_modkey=False ):
 
-        ckit.Window.__init__(
+        ckit.TextWindow.__init__(
             self,
             x=x,
             y=y,

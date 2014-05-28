@@ -265,11 +265,11 @@ def _configHotKeyAssign( main_window ):
     RESULT_CANCEL = 0
     RESULT_OK     = 1
 
-    class HotKeyWindow( ckit.Window ):
+    class HotKeyWindow( ckit.TextWindow ):
 
         def __init__( self, x, y, parent_window, show=True ):
 
-            ckit.Window.__init__(
+            ckit.TextWindow.__init__(
                 self,
                 x=x,
                 y=y,
