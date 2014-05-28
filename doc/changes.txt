@@ -6,6 +6,8 @@
 
         - Python33 から Python34 に移行
 
+        - ckit.Window の代わりに ckit.TextWindow を使うようにした。(ckitの設計変更に追従)
+
     **3.31**
 
         - LREdit と同じ、ckit 標準のコマンドシステムに乗り換え。各コマンドに info 引数を渡すようにした。
