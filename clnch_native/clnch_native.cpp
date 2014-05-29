@@ -360,17 +360,26 @@ PyTypeObject CheckDir_Type = {
 
 // ----------------------------------------------------------------------------
 
+struct FindFileCacheInfo
+{
+	std::wstring filename;
+	long long filesize;
+	DWORD attributes;
+	SYSTEMTIME system_time;
+};
+
+typedef std::list<FindFileCacheInfo> FindFileCacheInfoList;
+
 class FindFileCache
 {
 public:
-	FindFileCache( const std::wstring & _path, bool _ignore_dot, bool _ignore_dotdot, PyObject * _obj )
+	FindFileCache( const std::wstring & _path, bool _ignore_dot, bool _ignore_dotdot, FindFileCacheInfoList & _info_list )
 		:
 		path(_path),
 		ignore_dot(_ignore_dot),
 		ignore_dotdot(_ignore_dotdot),
-		obj(_obj)
+		info_list(_info_list)
 	{
-		Py_INCREF(obj);
 	}
 
 	FindFileCache( const FindFileCache & src )
@@ -378,21 +387,19 @@ public:
 		path(src.path),
 		ignore_dot(src.ignore_dot),
 		ignore_dotdot(src.ignore_dotdot),
-		obj(src.obj)
+		info_list(src.info_list)
 	{
-		Py_INCREF(obj);
 	}
 
 	~FindFileCache()
 	{
-		Py_DECREF(obj);
 	}
 
 public:
 	std::wstring path;
 	bool ignore_dot;
 	bool ignore_dotdot;
-	PyObject * obj;
+	FindFileCacheInfoList info_list;
 };
 
 typedef std::list<FindFileCache> FindFileCacheList;
@@ -412,7 +419,7 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
         "use_cache",
         NULL
     };
-
+    
     if(!PyArg_ParseTupleAndKeywords( args, kwds, "O|iii", kwlist,
         &pypath,
         &ignore_dot,
@@ -426,7 +433,7 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 	std::wstring path;
 	PythonUtil::PyStringToWideString( pypath, &path );
 	
-	PyObject * pyret = 0;
+	bool found = false;
 	
 	if(use_cache)
 	{
@@ -445,18 +452,24 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 		// キャッシュから見つかった		
 		if(i!=find_file_cache_list.end())
 		{
-			pyret = i->obj;
-			Py_INCREF(pyret);
+			found = true;
+
+			// 先頭に入れ替え
+			if(i!=find_file_cache_list.begin())
+			{
+				FindFileCache cache = *i;
+				find_file_cache_list.erase(i);
+				find_file_cache_list.insert( find_file_cache_list.begin(), cache );
+			}
 		}
 	}
 
-	if(pyret==0)
+	if(!found)
 	{
-		WIN32_FIND_DATA data;
+		FindFileCacheInfoList new_info_list;
 
-		pyret = PyList_New(0);
-	
 		HANDLE handle;
+		WIN32_FIND_DATA data;
 
 		Py_BEGIN_ALLOW_THREADS
 		handle = FindFirstFile( path.c_str(), &data );
@@ -473,24 +486,17 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 		
 				if(!ignore)
 				{
+					FindFileCacheInfo info;
+
+					info.filename = data.cFileName;
+					info.filesize = (((long long)data.nFileSizeHigh)<<32)+data.nFileSizeLow;
+					info.attributes = data.dwFileAttributes;
+
 					FILETIME local_file_time;
-					SYSTEMTIME system_time;
-		
 					FileTimeToLocalFileTime( &data.ftLastWriteTime, &local_file_time );
-					FileTimeToSystemTime( &local_file_time, &system_time );
+					FileTimeToSystemTime( &local_file_time, &info.system_time );
 
-					PyObject * pyitem = Py_BuildValue(
-						"(uL(iiiiii)i)",
-						data.cFileName,
-						(((long long)data.nFileSizeHigh)<<32)+data.nFileSizeLow,
-						system_time.wYear, system_time.wMonth, system_time.wDay,
-						system_time.wHour, system_time.wMinute, system_time.wSecond,
-						data.dwFileAttributes
-					);
-				
-					PyList_Append( pyret, pyitem );
-
-					Py_XDECREF(pyitem);
+					new_info_list.push_back(info);
 				}
 		
 				BOOL found;
@@ -504,22 +510,48 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 			FindClose(handle);
 			Py_END_ALLOW_THREADS
 		}
+		else if( GetLastError()==ERROR_FILE_NOT_FOUND )
+		{
+			// エラーにせず空のリストを返す
+			SetLastError(0);
+		}
 		else
 		{
-			Py_XDECREF(pyret);
-	
 			PyErr_SetFromWindowsErr(0);
 			return NULL;
 		}
-	}
-	
-	// キャッシュリストの先頭に登録する
-	find_file_cache_list.push_front( FindFileCache( path, ignore_dot!=0, ignore_dotdot!=0, pyret ) );
 
-	// キャッシュリストのサイズを４つに制限する
-	while( find_file_cache_list.size()>4 )
+		// キャッシュリストの先頭に登録する
+		find_file_cache_list.push_front( FindFileCache( path, ignore_dot!=0, ignore_dotdot!=0, new_info_list ) );
+
+		// キャッシュリストのサイズを４つに制限する
+		while( find_file_cache_list.size()>4 )
+		{
+			find_file_cache_list.pop_back();
+		}
+	}
+
+	// PythonのListに変換する
+	PyObject * pyret = PyList_New(0);
 	{
-		find_file_cache_list.pop_back();
+		// キャッシュ中の先頭のアイテムを返す
+		FindFileCacheInfoList & info_list = find_file_cache_list.begin()->info_list;
+
+		for( FindFileCacheInfoList::iterator i=info_list.begin() ; i!=info_list.end() ; ++i )
+		{
+			PyObject * pyitem = Py_BuildValue(
+				"(uL(iiiiii)i)",
+				i->filename.c_str(),
+				i->filesize,
+				i->system_time.wYear, i->system_time.wMonth, i->system_time.wDay,
+				i->system_time.wHour, i->system_time.wMinute, i->system_time.wSecond,
+				i->attributes
+			);
+
+			PyList_Append( pyret, pyitem );
+
+			Py_XDECREF(pyitem);
+		}
 	}
 
 	return pyret;
