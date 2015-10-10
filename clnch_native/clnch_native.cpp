@@ -1143,10 +1143,13 @@ static HDROP CreateHDrop( PyObject * pyfile_list )
 	// 構造体の後ろにファイル名のリストをコピーする。(ファイル名\0ファイル名\0ファイル名\0\0)
 	{
 		wchar_t * buf = (wchar_t *)(&lpDropFile[1]);
+		unsigned int remaining_buffer_size_in_word = total_buffer_size / sizeof(wchar_t);
+
 		for( int i=0 ; i<file_num ; i++ )
 		{
-			wcscpy( buf, filename_list[i].c_str() );
+			wcscpy_s( buf, remaining_buffer_size_in_word, filename_list[i].c_str() );
 			buf += filename_list[i].length()+1;
+			remaining_buffer_size_in_word -= filename_list[i].length() + 1;
 		}
 		*buf = 0;
 	}
@@ -1553,7 +1556,7 @@ extern "C" PyMODINIT_FUNC PyInit_clnch_native(void)
 
     if( PyErr_Occurred() )
     {
-        Py_FatalError( "can't initialize module "MODULE_NAME );
+        Py_FatalError( "can't initialize module " MODULE_NAME );
     }
 
 	return m;
