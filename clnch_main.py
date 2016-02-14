@@ -16,9 +16,6 @@ import getopt
 import locale
 
 import ckit
-
-ckit.setLocale( locale.getdefaultlocale()[0] )
-
 import pyauto
 
 import clnch_ipc
