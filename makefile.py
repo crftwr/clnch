@@ -16,7 +16,7 @@ DIST_SRC_DIR = "dist/src"
 VERSION = clnch_resource.clnch_version.replace(".","").replace(" ","")
 ARCHIVE_NAME = "clnch_%s.zip" % VERSION
 
-PYTHON_DIR = "c:/Python34"
+PYTHON_DIR = "c:/Python35"
 PYTHON = PYTHON_DIR + "/python.exe"
 SVN_DIR = "c:/Program Files/TortoiseSVN/bin"
 DOXYGEN_DIR = "c:/Program Files/doxygen"
@@ -56,7 +56,7 @@ def createZip( zip_filename, items ):
 DIST_FILES = [
     "clnch/clnch.exe",
     "clnch/lib",
-    "clnch/python34.dll",
+    "clnch/python35.dll",
     "clnch/library.zip",
     "clnch/_config.py",
     "clnch/readme.txt",

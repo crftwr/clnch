@@ -6,6 +6,9 @@
 
         - ビルドに Visual Studio 2015 を使うようにした。
 
+        - Python34 から Python35 に移行
+
+
     **3.32**
 
         - Python33 から Python34 に移行
