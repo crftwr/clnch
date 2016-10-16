@@ -1,3 +1,12 @@
 clnch_native/Release/
 clnch_native/Debug/
 clnch_native.pyd
+Debug/
+dist/
+build/
+doc/html/
+lib/
+doc/obj/
+Release/
+clnch.VC.opendb
+library.zip
