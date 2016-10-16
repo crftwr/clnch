@@ -93,7 +93,7 @@ int AppMain()
 
 	// Execute python side main script
 	{
-		PyObject * module = PyImport_ImportModule("keyhac_main");
+		PyObject * module = PyImport_ImportModule("clnch_main");
 		if (module == NULL)
 		{
 			PyErr_Print();

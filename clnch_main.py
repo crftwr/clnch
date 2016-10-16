@@ -3,17 +3,24 @@
 
 import sys
 import os
-
-os.environ["PATH"] = os.path.join( os.path.split(sys.argv[0])[0], 'lib' ) + ";" + os.environ["PATH"]
-
-sys.path[0:0] = [
-    os.path.join( os.path.split(sys.argv[0])[0], '..' ),
-    os.path.join( os.path.split(sys.argv[0])[0], 'extension' ),
-    os.path.join( os.path.split(sys.argv[0])[0], 'lib' ),
-    ]
-
 import getopt
 import locale
+
+import importlib.abc
+    
+class CustomPydFinder(importlib.abc.MetaPathFinder):
+    def find_module( self, fullname, path=None ):
+        pyd_filename_body = fullname.split(".")[-1]
+        pyd_fullpath = os.path.exists( "./lib/" + pyd_filename_body + ".pyd" )
+        if pyd_fullpath:
+            for importer in sys.meta_path:
+                if isinstance(importer, self.__class__):
+                    continue
+                loader = importer.find_module( fullname, None)
+                if loader:
+                    return loader
+
+sys.meta_path.append(CustomPydFinder())
 
 import ckit
 import pyauto
@@ -68,7 +75,6 @@ if existing_clnch_wnd:
 
 # IPCのために必要でないモジュールはここで import する
 
-import os
 import shutil
 
 import clnch
@@ -76,59 +82,57 @@ import clnch_mainwindow
 import clnch_ini
 import clnch_misc
 
-if __name__ == "__main__":
+ckit.registerWindowClass( "Clnch" )
+ckit.registerCommandInfoConstructor( ckit.CommandInfo )
 
-    ckit.registerWindowClass( "Clnch" )
-    ckit.registerCommandInfoConstructor( ckit.CommandInfo )
+sys.path[0:0] = [
+    os.path.join( ckit.getAppExePath(), 'extension' ),
+    ]
 
-    sys.path[0:0] = [
-        os.path.join( ckit.getAppExePath(), 'extension' ),
-        ]
+# exeと同じ位置にある設定ファイルを優先する
+if os.path.exists( os.path.join( ckit.getAppExePath(), 'config.py' ) ):
+    ckit.setDataPath( ckit.getAppExePath() )
+else:    
+    ckit.setDataPath( os.path.join( ckit.getAppDataPath(), clnch_resource.clnch_dirname ) )
+    if not os.path.exists(ckit.dataPath()):
+        os.mkdir(ckit.dataPath())
 
-    # exeと同じ位置にある設定ファイルを優先する
-    if os.path.exists( os.path.join( ckit.getAppExePath(), 'config.py' ) ):
-        ckit.setDataPath( ckit.getAppExePath() )
-    else:    
-        ckit.setDataPath( os.path.join( ckit.getAppDataPath(), clnch_resource.clnch_dirname ) )
-        if not os.path.exists(ckit.dataPath()):
-            os.mkdir(ckit.dataPath())
+default_config_filename = os.path.join( ckit.getAppExePath(), '_config.py' )
+config_filename = os.path.join( ckit.dataPath(), 'config.py' )
+clnch_ini.ini_filename = os.path.join( ckit.dataPath(), 'clnch.ini' )
 
-    default_config_filename = os.path.join( ckit.getAppExePath(), '_config.py' )
-    config_filename = os.path.join( ckit.dataPath(), 'config.py' )
-    clnch_ini.ini_filename = os.path.join( ckit.dataPath(), 'clnch.ini' )
+# config.py がどこにもない場合は作成する
+if not os.path.exists(config_filename) and os.path.exists(default_config_filename):
+    shutil.copy( default_config_filename, config_filename )
 
-    # config.py がどこにもない場合は作成する
-    if not os.path.exists(config_filename) and os.path.exists(default_config_filename):
-        shutil.copy( default_config_filename, config_filename )
+clnch_ini.read()
 
-    clnch_ini.read()
+ckit.JobQueue.createDefaultQueue()
 
-    ckit.JobQueue.createDefaultQueue()
+_main_window = clnch_mainwindow.MainWindow(
+    config_filename = config_filename,
+    debug=debug,
+    profile=profile )
 
-    _main_window = clnch_mainwindow.MainWindow(
-        config_filename = config_filename,
-        debug=debug,
-        profile=profile )
+_main_window.configure()
 
-    _main_window.configure()
+_main_window.start()
 
-    _main_window.start()
+_main_window.topLevelMessageLoop()
 
-    _main_window.topLevelMessageLoop()
+_main_window.stop()
 
-    _main_window.stop()
+_main_window.saveState()
 
-    _main_window.saveState()
+clnch_debug.enableExitTimeout()
 
-    clnch_debug.enableExitTimeout()
+ckit.JobQueue.cancelAll()
 
-    ckit.JobQueue.cancelAll()
+_main_window.destroy()
 
-    _main_window.destroy()
+ckit.JobQueue.joinAll()
 
-    ckit.JobQueue.joinAll()
+clnch_ini.write()
 
-    clnch_ini.write()
-
-    clnch_debug.disableExitTimeout()
+clnch_debug.disableExitTimeout()
 
