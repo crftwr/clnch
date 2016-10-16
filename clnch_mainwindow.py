@@ -306,6 +306,7 @@ class MainWindow( ckit.TextWindow ):
 
         if title:
             title = " " + title + " "
+        if selection==None : selection=[ len(text), len(text) ]
         title_width = self.getStringWidth(title)
         status_string = [ "" ]
         result = [ None ]
@@ -356,6 +357,7 @@ class MainWindow( ckit.TextWindow ):
                 return True
 
             def _onUpdate( commandline_self, update_info ):
+
                 if update_handler:
                     if not update_handler(update_info):
                         return False
@@ -409,15 +411,39 @@ class MainWindow( ckit.TextWindow ):
             def selectAll(commandline_self):
                 self.commandline_edit.selectAll()
 
+            def getWindowWidthFromText( commandline_self, text ):
+
+                edit_width = self.getStringWidth(text) + 2
+
+                if status_string[0]:
+                    status_width = self.getStringWidth(status_string[0]) + 2
+                else:
+                    status_width = 0
+
+                window_width = title_width + edit_width + status_width
+
+                window_width = max( window_width, clnch_ini.getint( "GEOMETRY", "min_width", 18 ) )
+                window_width = min( window_width, clnch_ini.getint( "GEOMETRY", "max_width", 80 ) )
+                
+                return window_width
+
+            def getEditWidthFromWindowWidth( commandline_self, window_width ):
+
+                if status_string[0]:
+                    status_width = self.getStringWidth(status_string[0]) + 2
+                else:
+                    status_width = 0
+
+                edit_width = window_width - title_width - status_width
+                
+                return edit_width
+
             def updateWindowWidth( commandline_self, text ):
-                text_width = self.getStringWidth(text)
-                delta = text_width - self.commandline_edit.width + 2
-                if delta==0 : return
-                new_width = self.width() + delta
-                new_width = max( new_width, clnch_ini.getint( "GEOMETRY", "min_width", 18 ) )
-                new_width = min( new_width, clnch_ini.getint( "GEOMETRY", "max_width", 80 ) )
+                
+                window_width = commandline_self.getWindowWidthFromText(text)
+                if window_width == self.width() : return
                 window_rect = self.getWindowRect()
-                self.setPosSize( window_rect[0], window_rect[1], new_width, self.height(), 0 )                    
+                self.setPosSize( window_rect[0], window_rect[1], window_width, self.height(), 0 )                    
 
             def planCommand( commandline_self, command, info, history ):
                 commandline_self.planned_command_list.append( ( command, info, history ) )
@@ -467,15 +493,20 @@ class MainWindow( ckit.TextWindow ):
 
         commandline = CommandLine()
         
-        self.commandline_edit = ckit.EditWidget( self, title_width, self.height()-1, self.width()-title_width, 1, text, selection, auto_complete=auto_complete, no_bg=False, autofix_list=autofix_list, update_handler=commandline._onUpdate, candidate_handler=candidate_handler, candidate_remove_handler=candidate_remove_handler )
+        if status_handler:
+            status_string[0] = status_handler(ckit.EditWidget.UpdateInfo(text,selection))
+        
+        window_width = commandline.getWindowWidthFromText(text)
+        edit_width = commandline.getEditWidthFromWindowWidth(window_width)
+        
+        self.commandline_edit = ckit.EditWidget( self, title_width, self.height()-1, edit_width, 1, text, selection, auto_complete=auto_complete, no_bg=False, autofix_list=autofix_list, update_handler=commandline._onUpdate, candidate_handler=candidate_handler, candidate_remove_handler=candidate_remove_handler )
         self.commandline_edit.setImeRect( ( 0, 0, clnch_ini.getint( "GEOMETRY", "max_width", 80 ), 1 ) )
         self.keydown_hook = commandline._onKeyDown
         self.char_hook = commandline._onChar
         self.mouse_event_mask = True
         self.status_bar_paint_hook = commandline._onPaint
 
-        if status_handler:
-            status_string[0] = status_handler(ckit.EditWidget.UpdateInfo(text,selection))
+        commandline.updateWindowWidth(text)
 
         self.paint(PAINT_STATUS_BAR)
 
@@ -1407,7 +1438,9 @@ class MainWindow( ckit.TextWindow ):
 
         if result<0 : return
 
-        return items[result][0]
+        text = items[result][0]
+        
+        self.activeMessageLoop( text, [ 0, len(text) ] )
 
     ## 入力中の文字列をコマンド履歴から削除する
     #
