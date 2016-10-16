@@ -1,7 +1,7 @@
 ﻿
 clnch_appname = "CraftLaunch"
 clnch_dirname = "CraftLaunch"
-clnch_version = "3.32"
+clnch_version = "3.33"
 
 _startup_string_fmt = """\
 %s version %s:
