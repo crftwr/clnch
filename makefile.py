@@ -173,6 +173,7 @@ def target_copy():
 
     shutil.copy( "../ckit/ckitcore.pyd", "lib/ckitcore.pyd" )
     shutil.copy( "../pyauto/pyautocore.pyd", "lib/pyautocore.pyd" )
+    shutil.copy( "clnch_native.pyd", "lib/clnch_native.pyd" )
     shutil.copy( "migemo.dll", "lib/migemo.dll" )
 
 
