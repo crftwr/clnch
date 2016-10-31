@@ -10,9 +10,10 @@ import importlib.abc
     
 class CustomPydFinder(importlib.abc.MetaPathFinder):
     def find_module( self, fullname, path=None ):
+        exe_path = os.path.split(sys.argv[0])[0]
         pyd_filename_body = fullname.split(".")[-1]
-        pyd_fullpath = os.path.exists( "./lib/" + pyd_filename_body + ".pyd" )
-        if pyd_fullpath:
+        pyd_fullpath = os.path.join( exe_path, "lib", pyd_filename_body + ".pyd" )
+        if os.path.exists(pyd_fullpath):
             for importer in sys.meta_path:
                 if isinstance(importer, self.__class__):
                     continue
