@@ -13,6 +13,8 @@
 #include "python.h"
 #endif
 
+#define PYTHON_INSTALL_PATH L"c:\\Python36"
+
 //--------------------------------------
 
 int AppMain()
@@ -62,17 +64,30 @@ int AppMain()
 
 	// Python home
 	{
+#if defined(_DEBUG)
+		Py_SetPythonHome(PYTHON_INSTALL_PATH);
+#else
 		Py_SetPythonHome(const_cast<wchar_t*>(exe_dir.c_str()));
+#endif //_DEBUG
 	}
 
 	// Python module search path
 	{
 		std::wstring python_path;
-		python_path += exe_dir + L";";
-		python_path += exe_dir + L"/extension;";
-		python_path += exe_dir + L"/lib;";
-		python_path += exe_dir + L"/library.zip;";
 
+		python_path += exe_dir + L"/extension;";
+		
+		#if defined(_DEBUG)
+		python_path += exe_dir + L";";
+		python_path += exe_dir + L"/..;";
+		python_path += std::wstring(PYTHON_INSTALL_PATH) + L"\\Lib;";
+		python_path += std::wstring(PYTHON_INSTALL_PATH) + L"\\Lib\\site-packages;";
+		python_path += std::wstring(PYTHON_INSTALL_PATH) + L"\\DLLs;";
+		#else
+		python_path += exe_dir + L"/library.zip;";
+		python_path += exe_dir + L"/lib;";
+		#endif
+		
 		Py_SetPath(python_path.c_str());
 	}
 
