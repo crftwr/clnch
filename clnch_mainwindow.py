@@ -31,7 +31,6 @@ import clnch_debug
 import clnch_resource
 from clnch_resource import *
 
-os.stat_float_times(False)
 
 ## @addtogroup mainwindow メインウインドウ機能
 ## @{
