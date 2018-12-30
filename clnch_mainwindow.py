@@ -355,11 +355,25 @@ class MainWindow( ckit.TextWindow ):
 
                 return True
 
-            def _onUpdate( commandline_self, update_info ):
+            def _normalize( commandline_self, update_info ):
 
+                left = update_info.text[ : update_info.selection[0] ]
+                mid = update_info.text[ update_info.selection[0] : update_info.selection[1] ]
+                right = update_info.text[ update_info.selection[1] : ]
+                left = clnch_misc.normalizeCommandLineText(left)
+                mid = clnch_misc.normalizeCommandLineText(mid)
+                right = clnch_misc.normalizeCommandLineText(right)
+                update_info.text = left + mid + right
+                update_info.selection = [ len(left), len(left)+len(mid) ]
+
+            def _onUpdate( commandline_self, update_info ):
+            
+                commandline_self._normalize(update_info)
+            
                 if update_handler:
                     if not update_handler(update_info):
                         return False
+
                 if status_handler:
                     status_string[0] = status_handler(update_info)
                     self.paint(PAINT_STATUS_BAR)
@@ -468,14 +482,22 @@ class MainWindow( ckit.TextWindow ):
                 if quit:
                     commandline_self.quit()
 
-            def appendHistory(commandline_self,newentry):
+            def appendHistory( commandline_self, newentry ):
+                
+                # コマンド文字列正規化
+                newentry = clnch_misc.normalizeCommandLineText(newentry)
+                
+                # 既存の履歴にある場合は消す
                 newentry_lower = newentry.lower()
                 for i in range(len(self.commandline_history)):
                     if self.commandline_history[i].lower()==newentry_lower:
                         del self.commandline_history[i]
                         break
+                        
+                # 先頭に挿入
                 self.commandline_history.insert( 0, newentry )
 
+                # 1000個だけ残す
                 if len(self.commandline_history)>1000:
                     self.commandline_history = self.commandline_history[:1000]
 

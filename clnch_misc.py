@@ -123,6 +123,18 @@ def joinArgs( args ):
 
 #--------------------------------------------------------------------
 
+_commandline_normalize_table = str.maketrans(
+    "\t\r\n",
+    "   "
+    )
+
+def normalizeCommandLineText(s):
+    s = s.translate(_commandline_normalize_table)
+    s = " ".join( s.split() )
+    return s
+
+#--------------------------------------------------------------------
+
 def adjustWindowPosition( base_window, new_window, default_up, monitor_adjust_vertical=True, monitor_adjust_horizontal=True ):
 
     base_window_rect = base_window.getWindowRect()
