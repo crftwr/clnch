@@ -51,7 +51,7 @@ for option in option_list:
 def findExistingClnchWindow():
     found = [None]
     def callback( wnd, arg ):
-        if wnd.getClassName()=="ClnchWindowClass" and wnd.getText()==clnch_resource.clnch_appname:
+        if wnd.getClassName()=="ClnchWindowClass" and wnd.getText()==clnch_resource.clnch_appname + " MainWindow":
             found[0] = wnd
             return False
         return True

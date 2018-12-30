@@ -95,7 +95,7 @@ class MainWindow( ckit.TextWindow ):
             resizable = False,
             noframe = True,
             title_bar = False,
-            title = clnch_resource.clnch_appname,
+            title = clnch_resource.clnch_appname + " MainWindow",
             show = False,
             cursor = True,
             tool = True,

@@ -70,7 +70,7 @@ def compareTime( t1, t2 ):
 def findExistingClnchWindow():
     found = [None]
     def callback( wnd, arg ):
-        if wnd.getClassName()=="ClnchWindowClass" and wnd.getText()==clnch_resource.clnch_appname:
+        if wnd.getClassName()=="ClnchWindowClass" and wnd.getText()==clnch_resource.clnch_appname + " MainWindow":
             found[0] = wnd
             return False
         return True
@@ -130,7 +130,8 @@ _commandline_normalize_table = str.maketrans(
 
 def normalizeCommandLineText(s):
     s = s.translate(_commandline_normalize_table)
-    s = " ".join( s.split() )
+    while s.find("  ")>=0:
+        s = s.replace( "  ", " " )
     return s
 
 #--------------------------------------------------------------------
