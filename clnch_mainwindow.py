@@ -329,6 +329,7 @@ class MainWindow( ckit.TextWindow ):
                     if enter_handler:
                         self.commandline_edit.closeList()
                         if enter_handler( commandline_self, result[0], mod ):
+                            commandline_self.paint()
                             return True
                     commandline_self.quit()
 
@@ -407,6 +408,14 @@ class MainWindow( ckit.TextWindow ):
                 self.commandline_edit.paint()
 
             def paint(commandline_self):
+                
+                # ウインドウサイズとスクロール位置を更新する
+                text = self.commandline_edit.getText()
+                selection = self.commandline_edit.getSelection()
+                commandline_self.updateWindowWidth(text)
+                self.commandline_edit.makeVisible( selection[0] )
+                self.commandline_edit.makeVisible( selection[1] )
+
                 self.paint()
 
             def getText(commandline_self):
@@ -422,7 +431,8 @@ class MainWindow( ckit.TextWindow ):
                 self.commandline_edit.setSelection(selection)
 
             def selectAll(commandline_self):
-                self.commandline_edit.selectAll()
+                text = self.commandline_edit.getText()
+                commandline_self.setSelection( [ 0, len(text) ] )
 
             def getWindowWidthFromText( commandline_self, text ):
 
@@ -471,7 +481,6 @@ class MainWindow( ckit.TextWindow ):
     
                 if isinstance(result,str):
                     commandline_self.setText(result)
-                    commandline_self.updateWindowWidth(result)
                     commandline_self.setSelection( [ 0, len(result) ] )
                     commandline_self.paint()
                     return
