@@ -50,7 +50,7 @@ class commandline_Launcher:
                 if unc:
                     clnch_misc.checkNetConnection(path)
                 if unc and not tail:
-                    servername = unc[0].replace('/','\\')
+                    servername = drive.replace('/','\\')
                     infolist = clnch_native.enumShare(servername)
                     for info in infolist:
                         if info[1]==0:
