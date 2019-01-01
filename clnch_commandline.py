@@ -43,10 +43,13 @@ class commandline_Launcher:
 
             try:
                 path = ckit.joinPath( basedir, directory )
-                unc = os.path.splitunc(path)
-                if unc[0]:
+
+                drive, tail = os.path.splitdrive(path)
+                unc = ( drive.startswith("\\\\") or drive.startswith("//") )
+
+                if unc:
                     clnch_misc.checkNetConnection(path)
-                if unc[0] and not unc[1]:
+                if unc and not tail:
                     servername = unc[0].replace('/','\\')
                     infolist = clnch_native.enumShare(servername)
                     for info in infolist:
