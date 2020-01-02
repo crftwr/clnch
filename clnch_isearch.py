@@ -44,8 +44,9 @@ class IncrementalSearch:
 
             # 初めて migemo が必要になったときに遅延ロードする                    
             if migemo_object==None:
+                dll_path = os.path.join( ckit.getAppExePath(), 'lib' )
                 dict_path = os.path.join( ckit.getAppExePath(), 'dict' )
-                migemo_object = ckit.Migemo(dict_path)
+                migemo_object = ckit.Migemo( dll_path, dict_path )
             
             # 検索パターンが変更になったときだけクエリーをかける
             if self.migemo_pattern != pattern:
