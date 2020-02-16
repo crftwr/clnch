@@ -79,6 +79,16 @@ class MainWindow( ckit.TextWindow ):
         self.commandline_list = []
         self.commandline_history = []
         self.commandLineHistoryLoad()
+        
+        # 表示予定のモニターのDPIによってフォントサイズを調整する
+        monitor = clnch_ini.getint( "GEOMETRY", "monitor", 0 )
+        monitor_info_list = pyauto.Window.getMonitorInfo()
+        if not monitor<len(monitor_info_list): monitor = 0
+        monitor_info = monitor_info_list[monitor]
+        dpi_scale = ckit.TextWindow.getDisplayScalingFromPosition( monitor_info[0][0], monitor_info[0][1] )
+        font_name = clnch_ini.get( "FONT", "name", "MS Gothic" )
+        font_size = clnch_ini.getint( "FONT", "size", 12 )
+        font_size = round( font_size * dpi_scale )
 
         ckit.TextWindow.__init__(
             self,
@@ -86,8 +96,7 @@ class MainWindow( ckit.TextWindow ):
             y=0,
             width=clnch_ini.getint( "GEOMETRY", "min_width", 18 ),
             height=1,
-            font_name = clnch_ini.get( "FONT", "name", "" ),
-            font_size = clnch_ini.getint( "FONT", "size", 12 ),
+            font = ckit.getStockedFont( font_name, font_size ),
             bg_color = ckit.getColor("bg"),
             cursor0_color = ckit.getColor("cursor0"),
             cursor1_color = ckit.getColor("cursor1"),
@@ -104,6 +113,7 @@ class MainWindow( ckit.TextWindow ):
             endsession_handler = self._onEndSession,
             move_handler = self._onMove,
             size_handler = self._onSize,
+            dpi_handler = self._onDpi,
             keydown_handler = self._onKeyDown,
             char_handler = self._onChar,
             lbuttondown_handler = self._onLeftButtonDown,
@@ -119,7 +129,12 @@ class MainWindow( ckit.TextWindow ):
             clnch_debug.enablePrintErrorInfo()
 
         self.resetPos()
-            
+
+        # モニター境界付近でウインドウが作成された場合を考慮して、DPIを再確認する
+        dpi_scale2 = self.getDisplayScaling()
+        if dpi_scale2 != dpi_scale:
+            self.updateFont()
+
         self.updateTopMost()
         
         self.show(True)
@@ -612,6 +627,25 @@ class MainWindow( ckit.TextWindow ):
         self.updateThemeSize()
         self.paint()
 
+    def updateFont(self):
+        
+        scale = self.getDisplayScaling()
+
+        font_name = clnch_ini.get( "FONT", "name", "MS Gothic" )
+        font_size = clnch_ini.getint( "FONT", "size", 12 )
+        font_size = round( font_size * scale )
+
+        self.setFontFromFontObject( ckit.getStockedFont( font_name, font_size ) )
+
+        window_rect = self.getWindowRect()
+        self.setPosSize( (window_rect[0] + window_rect[2]) // 2, window_rect[1], self.width(), self.height(), ORIGIN_X_CENTER | ORIGIN_Y_TOP )
+
+        self.console_window.updateFont()
+
+
+    def _onDpi( self, scale ):
+        self.updateFont()
+
     def _onKeyDown( self, vk, mod ):
 
         #print( "_onKeyDown", vk, mod )
@@ -805,16 +839,6 @@ class MainWindow( ckit.TextWindow ):
         self.paint()
         
         self.console_window.updateColor()
-
-    #--------------------------------------------------------------------------
-
-    def updateFont(self):
-        fontname = clnch_ini.get( "FONT", "name", "" )
-        self.setFont( fontname, clnch_ini.getint( "FONT", "size", 12 ) )
-        window_rect = self.getWindowRect()
-        self.setPosSize( window_rect[0], window_rect[1], self.width(), self.height(), 0 )
-        
-        self.console_window.updateFont()
 
     #--------------------------------------------------------------------------
 

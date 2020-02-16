@@ -13,7 +13,7 @@
 #include "python.h"
 #endif
 
-#define PYTHON_INSTALL_PATH L"c:\\Python37"
+#define PYTHON_INSTALL_PATH L"c:\\Python38"
 
 //--------------------------------------
 
@@ -105,6 +105,9 @@ int AppMain()
 
 		LocalFree(argv);
 	}
+
+	// enable DPI handling
+	SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	// Execute python side main script
 	{

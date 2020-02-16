@@ -433,9 +433,9 @@ class ConsoleWindow(ckit.TextWindow):
         sys.stderr = sys.__stderr__
 
     #--------------------------------------------------------------------------
+
     def updateFont(self):
-        fontname = clnch_ini.get( "FONT", "name", "" )
-        self.setFont( fontname, clnch_ini.getint( "FONT", "size", 12 ) )
+        self.setFontFromFontObject( self.parent_window.getFont() )
         window_rect = self.getWindowRect()
         self.setPosSize( window_rect[0], window_rect[1], self.width(), self.height(), 0 )
 
