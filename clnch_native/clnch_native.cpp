@@ -6,7 +6,14 @@
 #include <list>
 #include <string>
 
+#if defined(_DEBUG)
+#undef _DEBUG
 #include "python.h"
+#define _DEBUG
+#else
+#include "python.h"
+#endif
+
 #include "frameobject.h"
 
 #include "pythonutil.h"
