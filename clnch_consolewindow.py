@@ -386,12 +386,16 @@ class ConsoleWindow(ckit.TextWindow):
 
     def _onMouseWheel( self, x, y, wheel, mod ):
 
-        while wheel>0:
-            self._scroll(-1)
-            wheel-=1
-        while wheel<0:
-            self._scroll(+1)
-            wheel+=1
+        wheel_per_line = 0.34
+        
+        if wheel>0:
+            while wheel>0:
+                self._scroll(-1)
+                wheel-=wheel_per_line
+        else:
+            while wheel<0:
+                self._scroll(+1)
+                wheel+=wheel_per_line
 
         self.paint()
 
