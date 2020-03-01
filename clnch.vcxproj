@@ -91,7 +91,8 @@
       <AdditionalLibraryDirectories>c:\Python38\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>c:\Python37\python.exe makefile.py</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
