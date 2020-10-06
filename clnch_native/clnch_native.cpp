@@ -629,7 +629,7 @@ BOOL doContextMenu( HWND hwnd, int x, int y, LPSHELLFOLDER pFolder, LPITEMIDLIST
             {
 				TRACE;
 
-				context_menu_oldWndProc = (WNDPROC)SetWindowLong( hwnd, GWL_WNDPROC, (DWORD)contextMenuWndProc );
+				context_menu_oldWndProc = (WNDPROC)SetWindowLongPtr( hwnd, GWLP_WNDPROC, (LONG_PTR)contextMenuWndProc );
 
                 bSuccess = TRUE;
                 idCmd = TrackPopupMenu(hMenu, 
@@ -642,7 +642,7 @@ BOOL doContextMenu( HWND hwnd, int x, int y, LPSHELLFOLDER pFolder, LPITEMIDLIST
 
 				TRACE;
 
-				SetWindowLong( hwnd, GWL_WNDPROC, (DWORD)context_menu_oldWndProc);
+				SetWindowLongPtr( hwnd, GWLP_WNDPROC, (LONG_PTR)context_menu_oldWndProc);
 				context_menu_oldWndProc = NULL;
 
                 if(idCmd)
@@ -742,7 +742,7 @@ static PyObject * _popupContextMenu(PyObject* self, PyObject* args)
 		
 	    Py_END_ALLOW_THREADS
 	
-		int file_num = PySequence_Length(file_list);
+		int file_num = (int)PySequence_Length(file_list);
 
 		LPITEMIDLIST * item_id_list = new LPITEMIDLIST[file_num];
 
@@ -794,11 +794,11 @@ static HDROP CreateHDrop( PyObject * pyfile_list )
 
 	HDROP hDrop;
 
-	int file_num = PySequence_Length(pyfile_list);
+	int file_num = (int)PySequence_Length(pyfile_list);
 
 	std::vector<std::wstring> filename_list;
 
-	unsigned int total_buffer_size = 0;
+	size_t total_buffer_size = 0;
 
 	TRACE;
 
@@ -845,7 +845,7 @@ static HDROP CreateHDrop( PyObject * pyfile_list )
 	// 構造体の後ろにファイル名のリストをコピーする。(ファイル名\0ファイル名\0ファイル名\0\0)
 	{
 		wchar_t * buf = (wchar_t *)(&lpDropFile[1]);
-		unsigned int remaining_buffer_size_in_word = total_buffer_size / sizeof(wchar_t);
+		size_t remaining_buffer_size_in_word = total_buffer_size / sizeof(wchar_t);
 
 		for( int i=0 ; i<file_num ; i++ )
 		{
@@ -1089,7 +1089,7 @@ static PyObject * _chooseColor( PyObject * self, PyObject * args )
 	COLORREF color_table[16] = {0};
 	if( PySequence_Check(py_color_table) )
 	{
-		int item_num = PySequence_Length(py_color_table);
+		int item_num = (int)PySequence_Length(py_color_table);
 		for( int i=0 ; i<item_num && i<16 ; i++ )
 		{
 			PyObject * item = PySequence_GetItem( py_color_table, i );
@@ -1232,7 +1232,7 @@ static PyModuleDef clnch_native_module =
 	NULL, NULL, NULL, NULL
 };
 
-extern "C" PyMODINIT_FUNC PyInit_clnch_native(void)
+PyMODINIT_FUNC PyInit_clnch_native(void)
 {
 	CoInitialize(NULL);
 	OleInitialize(NULL);

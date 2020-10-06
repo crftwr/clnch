@@ -1,20 +1,31 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clnch_native", "clnch_native.vcxproj", "{36A085CF-5F51-412A-816E-63E575F1CD44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{36A085CF-5F51-412A-816E-63E575F1CD44}.Debug|Win32.ActiveCfg = Debug|Win32
 		{36A085CF-5F51-412A-816E-63E575F1CD44}.Debug|Win32.Build.0 = Debug|Win32
+		{36A085CF-5F51-412A-816E-63E575F1CD44}.Debug|x64.ActiveCfg = Debug|x64
+		{36A085CF-5F51-412A-816E-63E575F1CD44}.Debug|x64.Build.0 = Debug|x64
 		{36A085CF-5F51-412A-816E-63E575F1CD44}.Release|Win32.ActiveCfg = Release|Win32
 		{36A085CF-5F51-412A-816E-63E575F1CD44}.Release|Win32.Build.0 = Release|Win32
+		{36A085CF-5F51-412A-816E-63E575F1CD44}.Release|x64.ActiveCfg = Release|x64
+		{36A085CF-5F51-412A-816E-63E575F1CD44}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6C90431-BA6B-43CE-9D15-2F11235612C5}
 	EndGlobalSection
 EndGlobal
