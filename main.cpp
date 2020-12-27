@@ -13,7 +13,7 @@
 #include "python.h"
 #endif
 
-#define PYTHON_INSTALL_PATH L"c:\\Python38"
+#define PYTHON_INSTALL_PATH L"c:\\Python38-64"
 
 //--------------------------------------
 

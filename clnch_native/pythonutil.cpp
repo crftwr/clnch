@@ -5,7 +5,7 @@ bool PythonUtil::PyStringToString( const PyObject * pystr, std::string * str )
 {
 	if( PyUnicode_Check(pystr) )
 	{
-		*str = StringUtil::WideCharToMultiByte( (const wchar_t*)PyUnicode_AS_UNICODE(pystr), PyUnicode_GET_SIZE(pystr) );
+		*str = StringUtil::WideCharToMultiByte( (const wchar_t*)PyUnicode_AS_UNICODE(pystr), (int)PyUnicode_GET_SIZE(pystr) );
 		return true;
 	}
 	else

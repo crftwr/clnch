@@ -28,3 +28,4 @@ clnch.aps
 __pycache__/
 clnch_native/clnch_native.vcxproj.user
 clnch_native/clnch_native.sdf
+*.ilk

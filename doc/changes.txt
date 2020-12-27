@@ -3,6 +3,13 @@
 =========
 
 
+    **3.40**
+
+        - 64 bit でビルド (32 bit での動作は今後サポートしない)
+
+        - Windows 10 May 2020 Update 以降の IME 動作の非互換性に起因する操作不能バグを修正。(https://github.com/crftwr/cfiler/issues/56)
+
+
     **3.38**
 
         - Python38 に移行
