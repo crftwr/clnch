@@ -123,7 +123,7 @@ def target_all():
 def target_compile():
 
     # compile python source files
-    compilePythonRecursively( "c:/Python38-64/Lib", "build/Lib", 
+    compilePythonRecursively( f"{PYTHON_DIR}/Lib", "build/Lib", 
         directory_black_list = [
             "site-packages",
             "test",
@@ -131,7 +131,7 @@ def target_compile():
             "idlelib",
             ]
         )
-    compilePythonRecursively( "c:/Python38-64/Lib/site-packages/PIL", "build/Lib/PIL" )
+    compilePythonRecursively( f"{PYTHON_DIR}/Lib/site-packages/PIL", "build/Lib/PIL" )
     compilePythonRecursively( "../ckit", "build/Lib/ckit" )
     compilePythonRecursively( "../pyauto", "build/Lib/pyauto" )
     compilePythonRecursively( ".", "build/Lib", 
@@ -152,9 +152,9 @@ def target_copy():
 
     rmtree("lib")
 
-    shutil.copy( "c:/Python38-64/python38.dll", "python38.dll" )
+    shutil.copy( f"{PYTHON_DIR}/python38.dll", "python38.dll" )
 
-    shutil.copytree( "c:/Python38-64/DLLs", "lib", 
+    shutil.copytree( f"{PYTHON_DIR}/DLLs", "lib", 
         ignore=shutil.ignore_patterns(
             "tcl*.*",
             "tk*.*",
@@ -169,7 +169,7 @@ def target_copy():
             )
         )
 
-    shutil.copy( "c:/Python38-64/Lib/site-packages/PIL/_imaging.cp38-win_amd64.pyd", "lib/_imaging.pyd" )
+    shutil.copy( f"{PYTHON_DIR}/Lib/site-packages/PIL/_imaging.cp38-win_amd64.pyd", "lib/_imaging.pyd" )
 
     shutil.copy( "../ckit/ckitcore.pyd", "lib/ckitcore.pyd" )
     shutil.copy( "../pyauto/pyautocore.pyd", "lib/pyautocore.pyd" )
