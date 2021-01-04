@@ -1,4 +1,4 @@
-#ifndef __CDataObject
+﻿#ifndef __CDataObject
 #define __CDataObject
 
 #include "olednd_mydarray.h"
@@ -21,7 +21,7 @@ class CDataObject : public IDataObject
 	virtual HRESULT __stdcall GetDataHere(FORMATETC *pFormatetc, STGMEDIUM *pmedium);
 	virtual HRESULT __stdcall QueryGetData(FORMATETC *pFormatetc);
 	virtual HRESULT __stdcall GetCanonicalFormatEtc(FORMATETC *pFormatetcIn, FORMATETC *pFormatetcInOut);
-	virtual HRESULT __stdcall SetData(FORMATETC *pFormatetc, STGMEDIUM *pmedium, BOOL fRelease); /*fRelease=TRUE�̎�DataObject*/
+	virtual HRESULT __stdcall SetData(FORMATETC *pFormatetc, STGMEDIUM *pmedium, BOOL fRelease); /*fRelease=TRUEの時DataObject*/
 	virtual HRESULT __stdcall EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC **ppenumFormatetc);
 	virtual HRESULT __stdcall DAdvise(FORMATETC *pFormatetc, DWORD advf, IAdviseSink *pAdvSink, DWORD *pdwConnection);
 	virtual HRESULT __stdcall DUnadvise(DWORD dwConnection);

@@ -1,4 +1,4 @@
-#ifndef	__MyDArray
+﻿#ifndef	__MyDArray
 #define	__MyDArray
 
 #include "windows.h"

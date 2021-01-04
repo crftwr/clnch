@@ -1,4 +1,4 @@
-#ifndef _STRUTIL_H_
+﻿#ifndef _STRUTIL_H_
 #define _STRUTIL_H_
 
 #include <string>

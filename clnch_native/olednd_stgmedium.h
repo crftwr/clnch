@@ -1,4 +1,4 @@
-#ifndef __CSTGMEDIUM
+﻿#ifndef __CSTGMEDIUM
 #define __CSTGMEDIUM
 
 #include "windows.h"

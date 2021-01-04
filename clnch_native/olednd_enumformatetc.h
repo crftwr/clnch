@@ -1,4 +1,4 @@
-#ifndef __CEnumFORMATETC
+﻿#ifndef __CEnumFORMATETC
 #define __CEnumFORMATETC
 
 #include "olednd_mydarray.h"

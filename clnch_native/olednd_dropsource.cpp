@@ -1,4 +1,4 @@
-#include "olednd_dropsource.h"
+ï»¿#include "olednd_dropsource.h"
 
 HRESULT __stdcall CDropSource::QueryInterface(const IID& iid, void** ppv)
 {
@@ -34,14 +34,14 @@ ULONG __stdcall CDropSource::Release()
 
 HRESULT __stdcall CDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
 {
-	/* ƒhƒ‰ƒbƒO‚ðŒp‘±‚·‚é‚©‚Ç‚¤‚©‚ðŒˆ‚ß‚é */
+	/* ãƒ‰ãƒ©ãƒƒã‚°ã‚’ç¶™ç¶šã™ã‚‹ã‹ã©ã†ã‹ã‚’æ±ºã‚ã‚‹ */
 
-	/* ESC‚ª‰Ÿ‚³‚ê‚½ê‡‚âƒ}ƒEƒX‚Ìƒ{ƒ^ƒ“‚ª—¼•û‰Ÿ‚³‚ê‚½‚Æ‚«‚Í’†Ž~ */
+	/* ESCãŒæŠ¼ã•ã‚ŒãŸå ´åˆã‚„ãƒžã‚¦ã‚¹ã®ãƒœã‚¿ãƒ³ãŒä¸¡æ–¹æŠ¼ã•ã‚ŒãŸã¨ãã¯ä¸­æ­¢ */
 	if(fEscapePressed || (MK_LBUTTON | MK_RBUTTON) == (grfKeyState & (MK_LBUTTON | MK_RBUTTON))){
 		return DRAGDROP_S_CANCEL;
 	}
 
-	/* ƒ}ƒEƒXƒ{ƒ^ƒ“‚ª—£‚³‚ê‚½‚Æ‚«‚Íƒhƒƒbƒv */
+	/* ãƒžã‚¦ã‚¹ãƒœã‚¿ãƒ³ãŒé›¢ã•ã‚ŒãŸã¨ãã¯ãƒ‰ãƒ­ãƒƒãƒ— */
 	if((grfKeyState & (MK_LBUTTON | MK_RBUTTON)) == 0){
 		return DRAGDROP_S_DROP;
 	}
@@ -50,8 +50,8 @@ HRESULT __stdcall CDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfK
 
 HRESULT __stdcall CDropSource::GiveFeedback(DWORD dwEffect)
 {
-	/* ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ð•Ï‚¦‚½‚èA“Á•Ê‚È•\Ž¦‚ð‚·‚é‚Æ‚«‚Í‚±‚±‚Ås‚¤ */
+	/* ãƒžã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã‚’å¤‰ãˆãŸã‚Šã€ç‰¹åˆ¥ãªè¡¨ç¤ºã‚’ã™ã‚‹ã¨ãã¯ã“ã“ã§è¡Œã† */
 
-	//•W€‚Ìƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ðŽg‚¤
+	//æ¨™æº–ã®ãƒžã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã‚’ä½¿ã†
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }

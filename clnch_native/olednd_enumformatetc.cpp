@@ -1,4 +1,4 @@
-#include "olednd_enumformatetc.h"
+ï»¿#include "olednd_enumformatetc.h"
 
 HRESULT __stdcall CEnumFORMATETC::QueryInterface(const IID& iid, void** ppv)
 {
@@ -40,7 +40,7 @@ HRESULT __stdcall CEnumFORMATETC::Next(ULONG celt, FORMATETC * rgelt, ULONG * pc
 	
 	if(celt <= 0 || rgelt == NULL || _current >= _num)	return S_FALSE;
 	
-	/* celt‚ª1‚Ì‚¾‚¯pceltFetched‚ÍNULL‚Éo—ˆ‚é*/
+	/* celtãŒ1ã®æ™‚ã ã‘pceltFetchedã¯NULLã«å‡ºæ¥ã‚‹*/
 	if(pceltFetched == NULL && celt != 1)	return S_FALSE;
 	
 	while(_current < _num && n > 0) {

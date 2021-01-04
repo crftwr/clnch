@@ -1,4 +1,4 @@
-#ifndef __CDropSource
+﻿#ifndef __CDropSource
 #define __CDropSource
 
 #include <shlobj.h>
