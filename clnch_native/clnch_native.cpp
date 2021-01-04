@@ -1,4 +1,4 @@
-#include <shlobj.h>
+ï»¿#include <shlobj.h>
 #include <intshcut.h>
 #include <lm.h>
 
@@ -139,7 +139,7 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 	
 	if(use_cache)
 	{
-		// ƒLƒƒƒbƒVƒ…‚ğŒŸõ‚·‚é
+		// ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚’æ¤œç´¢ã™ã‚‹
 		FindFileCacheList::iterator i;
 		for( i=find_file_cache_list.begin() ; i!=find_file_cache_list.end() ; ++i )
 		{
@@ -151,12 +151,12 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 			}
 		}
 
-		// ƒLƒƒƒbƒVƒ…‚©‚çŒ©‚Â‚©‚Á‚½		
+		// ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‹ã‚‰è¦‹ã¤ã‹ã£ãŸ		
 		if(i!=find_file_cache_list.end())
 		{
 			found = true;
 
-			// æ“ª‚É“ü‚ê‘Ö‚¦
+			// å…ˆé ­ã«å…¥ã‚Œæ›¿ãˆ
 			if(i!=find_file_cache_list.begin())
 			{
 				FindFileCache cache = *i;
@@ -179,6 +179,9 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 
 		if(handle!=INVALID_HANDLE_VALUE)
 		{
+			TIME_ZONE_INFORMATION tz;
+			GetTimeZoneInformation(&tz);
+
 			while(true)
 			{
 				bool ignore = false;
@@ -194,9 +197,9 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 					info.filesize = (((long long)data.nFileSizeHigh)<<32)+data.nFileSizeLow;
 					info.attributes = data.dwFileAttributes;
 
-					FILETIME local_file_time;
-					FileTimeToLocalFileTime( &data.ftLastWriteTime, &local_file_time );
-					FileTimeToSystemTime( &local_file_time, &info.system_time );
+					SYSTEMTIME system_time;
+					FileTimeToSystemTime(&data.ftLastWriteTime, &system_time);
+					SystemTimeToTzSpecificLocalTime(&tz, &system_time, &info.system_time);
 
 					new_info_list.push_back(info);
 				}
@@ -214,7 +217,7 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 		}
 		else if( GetLastError()==ERROR_FILE_NOT_FOUND )
 		{
-			// ƒGƒ‰[‚É‚¹‚¸‹ó‚ÌƒŠƒXƒg‚ğ•Ô‚·
+			// ã‚¨ãƒ©ãƒ¼ã«ã›ãšç©ºã®ãƒªã‚¹ãƒˆã‚’è¿”ã™
 			SetLastError(0);
 		}
 		else
@@ -223,20 +226,20 @@ static PyObject * _findFile(PyObject* self, PyObject* args, PyObject * kwds)
 			return NULL;
 		}
 
-		// ƒLƒƒƒbƒVƒ…ƒŠƒXƒg‚Ìæ“ª‚É“o˜^‚·‚é
+		// ã‚­ãƒ£ãƒƒã‚·ãƒ¥ãƒªã‚¹ãƒˆã®å…ˆé ­ã«ç™»éŒ²ã™ã‚‹
 		find_file_cache_list.push_front( FindFileCache( path, ignore_dot!=0, ignore_dotdot!=0, new_info_list ) );
 
-		// ƒLƒƒƒbƒVƒ…ƒŠƒXƒg‚ÌƒTƒCƒY‚ğ‚S‚Â‚É§ŒÀ‚·‚é
+		// ã‚­ãƒ£ãƒƒã‚·ãƒ¥ãƒªã‚¹ãƒˆã®ã‚µã‚¤ã‚ºã‚’ï¼”ã¤ã«åˆ¶é™ã™ã‚‹
 		while( find_file_cache_list.size()>4 )
 		{
 			find_file_cache_list.pop_back();
 		}
 	}
 
-	// Python‚ÌList‚É•ÏŠ·‚·‚é
+	// Pythonã®Listã«å¤‰æ›ã™ã‚‹
 	PyObject * pyret = PyList_New(0);
 	{
-		// ƒLƒƒƒbƒVƒ…’†‚Ìæ“ª‚ÌƒAƒCƒeƒ€‚ğ•Ô‚·
+		// ã‚­ãƒ£ãƒƒã‚·ãƒ¥ä¸­ã®å…ˆé ­ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¿”ã™
 		FindFileCacheInfoList & info_list = find_file_cache_list.begin()->info_list;
 
 		for( FindFileCacheInfoList::iterator i=info_list.begin() ; i!=info_list.end() ; ++i )
@@ -299,7 +302,7 @@ static PyObject * _enumShare(PyObject* self, PyObject* args, PyObject * kwds)
          		/*
             	printf("%-20S%-30S%-8u",p->shi502_netname, p->shi502_path, p->shi502_current_uses);
 
-	            // shi502_security_descriptor ƒƒ“ƒo‚Ì’l‚ª—LŒø‚©‚Ç‚¤‚©ŒŸØ‚·‚éB
+	            // shi502_security_descriptor ãƒ¡ãƒ³ãƒã®å€¤ãŒæœ‰åŠ¹ã‹ã©ã†ã‹æ¤œè¨¼ã™ã‚‹ã€‚
 	            if(IsValidSecurityDescriptor(p->shi502_security_descriptor))
 	            {
 	               	printf("Yes\n");
@@ -310,7 +313,7 @@ static PyObject * _enumShare(PyObject* self, PyObject* args, PyObject * kwds)
 	            }
 	            */
 
-				// ƒŠƒXƒg‚É’Ç‰Á
+				// ãƒªã‚¹ãƒˆã«è¿½åŠ 
 				{
 					PyObject * pyitem = Py_BuildValue(
 						"(uiuiiiuu)",
@@ -332,7 +335,7 @@ static PyObject * _enumShare(PyObject* self, PyObject* args, PyObject * kwds)
 	            p++;
 			}
 
-        	// Š„‚è“–‚ÄÏ‚İ‚Ìƒoƒbƒtƒ@‚ğ‰ğ•ú‚·‚éB
+        	// å‰²ã‚Šå½“ã¦æ¸ˆã¿ã®ãƒãƒƒãƒ•ã‚¡ã‚’è§£æ”¾ã™ã‚‹ã€‚
         	NetApiBufferFree(BufPtr);
       	}
       	else
@@ -399,7 +402,10 @@ static PyObject * _setFileTime(PyObject* self, PyObject* args, PyObject * kwds)
 	std::wstring path;
 	PythonUtil::PyStringToWideString( pypath, &path );
 	
-	DWORD attr = GetFileAttributes(path.c_str());
+	DWORD attr;
+	Py_BEGIN_ALLOW_THREADS
+	attr = GetFileAttributes(path.c_str());
+	Py_END_ALLOW_THREADS
 	if(attr==-1)
 	{
 		PyErr_SetString( PyExc_IOError, "could not get file attribute." );
@@ -411,14 +417,35 @@ static PyObject * _setFileTime(PyObject* self, PyObject* args, PyObject * kwds)
     
     if(is_readonly)
     {
-    	// ReadOnly ‘®«‚Ì‚Æ‚«‚Í‚¢‚Á‚½‚ñ‰ğœ‚µ‚È‚¢‚Æƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚ªXV‚Å‚«‚È‚¢
+    	// ReadOnly å±æ€§ã®ã¨ãã¯ã„ã£ãŸã‚“è§£é™¤ã—ãªã„ã¨ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ãŒæ›´æ–°ã§ããªã„
+		Py_BEGIN_ALLOW_THREADS
 		SetFileAttributes( path.c_str(), attr & (~FILE_ATTRIBUTE_READONLY) );
-    }
+		Py_END_ALLOW_THREADS
+	}
 	
-	HANDLE hFile = CreateFile(
-		path.c_str(), GENERIC_WRITE, 0, NULL,
-		OPEN_EXISTING, is_dir?(FILE_ATTRIBUTE_NORMAL|FILE_FLAG_BACKUP_SEMANTICS):FILE_ATTRIBUTE_NORMAL, NULL
-	);
+	HANDLE hFile;
+
+	// CreateFile ã¯ ãƒªãƒˆãƒ©ã‚¤ãŒå¿…è¦
+	// http://support.microsoft.com/kb/316609/ja
+	for (int retry = 0; retry < 5; ++retry)
+	{
+		Py_BEGIN_ALLOW_THREADS
+		hFile = CreateFile(
+			path.c_str(), GENERIC_WRITE, 0, NULL,
+			OPEN_EXISTING, is_dir ? (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_BACKUP_SEMANTICS) : FILE_ATTRIBUTE_NORMAL, NULL
+		);
+		Py_END_ALLOW_THREADS
+
+		if (hFile == INVALID_HANDLE_VALUE && GetLastError() == ERROR_SHARING_VIOLATION)
+		{
+			Py_BEGIN_ALLOW_THREADS
+			::Sleep(250);
+			Py_END_ALLOW_THREADS
+			continue;
+		}
+
+		break;
+	}
 
 	if(hFile==INVALID_HANDLE_VALUE)
 	{
@@ -426,37 +453,48 @@ static PyObject * _setFileTime(PyObject* self, PyObject* args, PyObject * kwds)
 
 	    if(is_readonly)
 	    {
-	    	// ReadOnly ‘®«‚ğŒ³‚É–ß‚·
+	    	// ReadOnly å±æ€§ã‚’å…ƒã«æˆ»ã™
+			Py_BEGIN_ALLOW_THREADS
 			SetFileAttributes( path.c_str(), attr );
-	    }
+			Py_END_ALLOW_THREADS
+		}
 
 		return NULL;
 	}
 
-	SYSTEMTIME stFileTime;
-	memset( &stFileTime, 0, sizeof(stFileTime) );
-	stFileTime.wYear = year;
-	stFileTime.wMonth = month;
-	stFileTime.wDay = day;
-	stFileTime.wHour = hour;
-	stFileTime.wMinute = minute;
-	stFileTime.wSecond = second;
-	
-	FILETIME ftFileTime;
-	SystemTimeToFileTime(&stFileTime, &ftFileTime);
+	SYSTEMTIME system_time;
+	memset(&system_time, 0, sizeof(system_time));
+	system_time.wYear = year;
+	system_time.wMonth = month;
+	system_time.wDay = day;
+	system_time.wHour = hour;
+	system_time.wMinute = minute;
+	system_time.wSecond = second;
 
-	FILETIME ftFileTimeUTC;
-	LocalFileTimeToFileTime( &ftFileTime, &ftFileTimeUTC );
+	TIME_ZONE_INFORMATION tz;
+	GetTimeZoneInformation(&tz);
 
-	SetFileTime( hFile, NULL, NULL, &ftFileTimeUTC );
+	SYSTEMTIME system_time_utc;
+	TzSpecificLocalTimeToSystemTime(&tz, &system_time, &system_time_utc);
 
+	FILETIME file_time_utc;
+	SystemTimeToFileTime(&system_time_utc, &file_time_utc);
+
+	Py_BEGIN_ALLOW_THREADS
+	SetFileTime(hFile, NULL, NULL, &file_time_utc);
+	Py_END_ALLOW_THREADS
+
+	Py_BEGIN_ALLOW_THREADS
 	CloseHandle(hFile);
+	Py_END_ALLOW_THREADS
 
     if(is_readonly)
     {
-    	// ReadOnly ‘®«‚ğŒ³‚É–ß‚·
-		SetFileAttributes( path.c_str(), attr );
-    }
+    	// ReadOnly å±æ€§ã‚’å…ƒã«æˆ»ã™
+		Py_BEGIN_ALLOW_THREADS
+		SetFileAttributes(path.c_str(), attr);
+		Py_END_ALLOW_THREADS
+	}
 
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -568,8 +606,8 @@ BOOL doContextMenu( HWND hwnd, int x, int y, LPSHELLFOLDER pFolder, LPITEMIDLIST
 	
 	#if 0
 
-	// ƒGƒNƒXƒvƒ[ƒ‰‚Ìƒrƒ…[‚Ì”wŒi•”•ª‚ÌƒRƒ“ƒeƒLƒXƒgƒƒjƒ…[‚ÌƒeƒXƒg
-	// ‚È‚º‚©A“\‚è•t‚¯A‚ª–³Œø‰»‚³‚ê‚Ä‚¢‚é
+	// ã‚¨ã‚¯ã‚¹ãƒ—ãƒ­ãƒ¼ãƒ©ã®ãƒ“ãƒ¥ãƒ¼ã®èƒŒæ™¯éƒ¨åˆ†ã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒ†ã‚¹ãƒˆ
+	// ãªãœã‹ã€è²¼ã‚Šä»˜ã‘ã€ãŒç„¡åŠ¹åŒ–ã•ã‚Œã¦ã„ã‚‹
 	IShellView * pView;
 	pFolder->CreateViewObject( hwnd, IID_IShellView, (LPVOID *)&pView );
 	pView->GetItemObject( SVGIO_BACKGROUND, IID_IContextMenu, (LPVOID *)&lpcm );
@@ -577,9 +615,9 @@ BOOL doContextMenu( HWND hwnd, int x, int y, LPSHELLFOLDER pFolder, LPITEMIDLIST
 
 	#else
 
-    //IContextMenu‚ğæ“¾‚µ‚Ü‚·B
-    //‘æOˆø”‚ÉAƒtƒ@ƒCƒ‹‚Ì”
-    //‘ælˆø”‚ÉAƒtƒ@ƒCƒ‹‚ÌƒAƒCƒeƒ€‚h‚cƒŠƒXƒg”z—ñ‚ÌƒAƒhƒŒƒX‚ğ‚¢‚ê‚Ü‚·B
+    //IContextMenuã‚’å–å¾—ã—ã¾ã™ã€‚
+    //ç¬¬ä¸‰å¼•æ•°ã«ã€ãƒ•ã‚¡ã‚¤ãƒ«ã®æ•°
+    //ç¬¬å››å¼•æ•°ã«ã€ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¢ã‚¤ãƒ†ãƒ ï¼©ï¼¤ãƒªã‚¹ãƒˆé…åˆ—ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’ã„ã‚Œã¾ã™ã€‚
     ret = pFolder->GetUIObjectOf(
     	hwnd,
         num,
@@ -726,7 +764,7 @@ static PyObject * _popupContextMenu(PyObject* self, PyObject* args)
 		
 		if(str_directory.empty())
 		{
-			// ƒ}ƒCƒRƒ“ƒsƒ…[ƒ^
+			// ãƒã‚¤ã‚³ãƒ³ãƒ”ãƒ¥ãƒ¼ã‚¿
 			SHGetSpecialFolderLocation( hwnd, CSIDL_DRIVES, &directory_item_id );
 		}
 		else
@@ -834,15 +872,15 @@ static HDROP CreateHDrop( PyObject * pyfile_list )
 
 	LPDROPFILES lpDropFile;
 	lpDropFile = (LPDROPFILES)::GlobalLock(hDrop);
-	lpDropFile->pFiles = sizeof(DROPFILES);		// ƒtƒ@ƒCƒ‹–¼‚ÌƒŠƒXƒg‚Ü‚Å‚ÌƒIƒtƒZƒbƒg
+	lpDropFile->pFiles = sizeof(DROPFILES);		// ãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒªã‚¹ãƒˆã¾ã§ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 	lpDropFile->pt.x = 0;
 	lpDropFile->pt.y = 0;
 	lpDropFile->fNC = FALSE;
-	lpDropFile->fWide = TRUE;					// ƒƒCƒhƒLƒƒƒ‰‚Ìê‡‚Í TRUE
+	lpDropFile->fWide = TRUE;					// ãƒ¯ã‚¤ãƒ‰ã‚­ãƒ£ãƒ©ã®å ´åˆã¯ TRUE
 
 	TRACE;
 
-	// \‘¢‘Ì‚ÌŒã‚ë‚Éƒtƒ@ƒCƒ‹–¼‚ÌƒŠƒXƒg‚ğƒRƒs[‚·‚éB(ƒtƒ@ƒCƒ‹–¼\0ƒtƒ@ƒCƒ‹–¼\0ƒtƒ@ƒCƒ‹–¼\0\0)
+	// æ§‹é€ ä½“ã®å¾Œã‚ã«ãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒªã‚¹ãƒˆã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚(ãƒ•ã‚¡ã‚¤ãƒ«å\0ãƒ•ã‚¡ã‚¤ãƒ«å\0ãƒ•ã‚¡ã‚¤ãƒ«å\0\0)
 	{
 		wchar_t * buf = (wchar_t *)(&lpDropFile[1]);
 		size_t remaining_buffer_size_in_word = total_buffer_size / sizeof(wchar_t);
@@ -902,14 +940,14 @@ static PyObject * _doDragAndDrop(PyObject* self, PyObject* args)
 		DWORD		dwEffect;
 		int	ret;
 
-		//CDataObject‚ğì¬‚µCF_HDROPŒ`®‚Ìƒf[ƒ^‚ğ“o˜^
+		//CDataObjectã‚’ä½œæˆã—CF_HDROPå½¢å¼ã®ãƒ‡ãƒ¼ã‚¿ã‚’ç™»éŒ²
 		dobj = new CDataObject();
 		if(dobj == NULL) goto error;
 		if(!dobj->allocate(1)) goto error;
 
 		if((hObject = CreateHDrop( pyfile_list )) == NULL) goto error;
 		CreateMedium(CF_HDROP, hObject, &fmt, &medium);
-		if(dobj->SetData(&fmt, &medium, TRUE) != S_OK) goto error;	 //‰ğ•ú‚ÍDataObject‚É”C‚·
+		if(dobj->SetData(&fmt, &medium, TRUE) != S_OK) goto error;	 //è§£æ”¾ã¯DataObjectã«ä»»ã™
 
 		hObject = NULL;
 
@@ -951,33 +989,33 @@ static PyObject * _getShellLinkInfo( PyObject * self, PyObject * args )
 
 	if( SUCCEEDED(CoInitialize(NULL)) )
 	{
-        // IShellLink ƒIƒuƒWƒFƒNƒg‚ğì¬‚µƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚é
+        // IShellLink ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆã—ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹
         hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
                                                 IID_IShellLink, (void **)&psl);
         if (SUCCEEDED(hres))
         {
             IPersistFile *ppf;
 
-            // IPersistFile ƒCƒ“ƒ^[ƒtƒFƒCƒX‚Ì–â‚¢‡‚í‚¹‚ğ‚¨‚±‚È‚¤
+            // IPersistFile ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®å•ã„åˆã‚ã›ã‚’ãŠã“ãªã†
             hres = psl->QueryInterface(IID_IPersistFile, (void **)&ppf);
             if (SUCCEEDED(hres))
             {
-                // ƒVƒ‡[ƒgƒJƒbƒg‚ğƒ[ƒh‚·‚é
+                // ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹
                 hres = ppf->Load( lnk.c_str(), STGM_READ );
 
                 if (SUCCEEDED(hres))
                 {
-                    // ƒŠƒ“ƒNæ‚ğæ“¾‚·‚é
+                    // ãƒªãƒ³ã‚¯å…ˆã‚’å–å¾—ã™ã‚‹
                     psl->GetPath( file, MAX_PATH, &wfd, SLGP_UNCPRIORITY );
     				psl->GetArguments( param, MAX_PATH );
     				psl->GetWorkingDirectory( directory, MAX_PATH );
     				psl->GetShowCmd( &swmode );
                 }
 
-                // IPersistFile ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğŠJ•ú‚·‚é
+                // IPersistFile ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’é–‹æ”¾ã™ã‚‹
                 ppf->Release();
             }
-            // IShellLink‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğŠJ•ú‚·‚é
+            // IShellLinkã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’é–‹æ”¾ã™ã‚‹
             psl->Release();
         }
 
@@ -1013,23 +1051,23 @@ static PyObject * _getInternetShortcutInfo( PyObject * self, PyObject * args )
 
 	if( SUCCEEDED(CoInitialize(NULL)) )
 	{
-        // IUniformResourceLocator ƒIƒuƒWƒFƒNƒg‚ğì¬‚µƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚é
+        // IUniformResourceLocator ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆã—ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹
         hres = CoCreateInstance(CLSID_InternetShortcut, NULL, CLSCTX_INPROC_SERVER,
                                                 IID_IUniformResourceLocator, (void **)&psl);
         if (SUCCEEDED(hres))
         {
             IPersistFile *ppf;
 
-            // IPersistFile ƒCƒ“ƒ^[ƒtƒFƒCƒX‚Ì–â‚¢‡‚í‚¹‚ğ‚¨‚±‚È‚¤
+            // IPersistFile ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®å•ã„åˆã‚ã›ã‚’ãŠã“ãªã†
             hres = psl->QueryInterface(IID_IPersistFile, (void **)&ppf);
             if (SUCCEEDED(hres))
             {
-                // ƒVƒ‡[ƒgƒJƒbƒg‚ğƒ[ƒh‚·‚é
+                // ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹
                 hres = ppf->Load( lnk.c_str(), STGM_READ );
 
                 if (SUCCEEDED(hres))
                 {
-                    // ƒŠƒ“ƒNæ‚ğæ“¾‚·‚é
+                    // ãƒªãƒ³ã‚¯å…ˆã‚’å–å¾—ã™ã‚‹
 					wchar_t * p;
                     hres = psl->GetURL( &p );
 					if (SUCCEEDED(hres))
@@ -1045,10 +1083,10 @@ static PyObject * _getInternetShortcutInfo( PyObject * self, PyObject * args )
 					}
                 }
 
-                // IPersistFile ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğŠJ•ú‚·‚é
+                // IPersistFile ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’é–‹æ”¾ã™ã‚‹
                 ppf->Release();
             }
-            // IUniformResourceLocator‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğŠJ•ú‚·‚é
+            // IUniformResourceLocatorã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’é–‹æ”¾ã™ã‚‹
             psl->Release();
         }
 
